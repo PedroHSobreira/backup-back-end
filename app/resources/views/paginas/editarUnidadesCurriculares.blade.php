@@ -45,7 +45,9 @@
             </div>
 
 
-            <form action="../atualizar/{{$dado->id}}" method="POST">
+            <form action="/atualizarUc/{{$dado->id}}" method="POST">
+                @csrf
+
                 <div class="modal-body">
                     <div class="row">
                         <!-- Nome -->
@@ -58,18 +60,24 @@
                         <!-- Tipo -->
                         <div class="col">
                             <label class="form-label fw-semibold">Código *</label>
-                            <input type="text" name="codigo" class="form-control" placeholder="Ex: UC10" value="{{$dado->codigoUc}}" required>
+                            <input type="text" name="codigoUc" class="form-control" placeholder="Ex: UC10" value="{{$dado->codigoUc}}" required>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col">
                             <label class="form-label fw-semibold">Curso *</label>
-                            <select name="curso" class="form-select" required>
+                            <select name="cursoCodigo" class="form-select" required>
                                 <option value="">Selecione o curso</option>
-                                <option value="tecnicoTI">Técnico de TI</option>
-                                <option value="devBd">Desenvolvimento de Banco de Dados</option>
-                            </select>
+
+                                @foreach ($cursos as $curso)
+                                <option value="{{ $curso->id }}"
+                                    {{ $curso->id == $dado->cursoCodigo ? 'selected' : '' }}>
+                                    {{ $curso->nome }}
+                                </option>
+                                @endforeach
+                                </select>
+
                         </div>
                     </div>
 
@@ -77,13 +85,13 @@
                         <!-- Carga Horária -->
                         <div class="col">
                             <label class="form-label fw-semibold">Carga Horária (horas) *</label>
-                            <input type="number" name="carga_horaria" class="form-control" min="0" value="{{$dado->cargaHoraria}}" required>
+                            <input type="number" name="cargaHoraria" class="form-control" min="0" value="{{$dado->cargaHoraria}}" required>
                         </div>
 
                         <!-- Turno -->
                         <div class="col">
                             <label class="form-label fw-semibold">Presença Mínima (%) *</label>
-                            <input type="number" name="presencaMin" class="form-control" min="0" value="{{$dado->presencaMinima}}" required>
+                            <input type="number" name="presencaMinima" class="form-control" min="0" value="{{$dado->presencaMinima}}" required>
                         </div>
                     </div>
 
@@ -91,13 +99,22 @@
                         <!-- Horário -->
                         <div class="col">
                             <label class="form-label fw-semibold">Dias de Aula *</label>
-                            <select name="diasAula" class="form-select" required>
+                            <select name="dias" class="form-select" required>
                                 <option value="">Selecione os dias</option>
-                                <option value="segunda a sexta">Segunda a Sexta</option>
-                                <option value="segunda, quarta e sexta">Segunda, Quarta e Sexta</option>
-                                <option value="terca e quinta">Terça e Quinta</option>
-                                <option value="sabado">Sábado</option>
+                                <option value="segunda a sexta" {{ $dado->dias == 'segunda a sexta' ? 'selected' : '' }}>
+                                    Segunda a Sexta
+                                </option>
+                                <option value="segunda, quarta e sexta" {{ $dado->dias == 'segunda, quarta e sexta' ? 'selected' : '' }}>
+                                    Segunda, Quarta e Sexta
+                                </option>
+                                <option value="terca e quinta" {{ $dado->dias == 'terca e quinta' ? 'selected' : '' }}>
+                                    Terça e Quinta
+                                </option>
+                                <option value="sabado" {{ $dado->dias == 'sabado' ? 'selected' : '' }}>
+                                    Sábado
+                                </option>
                             </select>
+
                         </div>
 
                         <!-- Data Início -->
@@ -121,9 +138,10 @@
                         <div class="col">
                             <label class="form-label fw-semibold">Status</label>
                             <select name="status" class="form-select">
-                                <option value="ativo" selected>Ativo</option>
-                                <option value="inativo">Inativo</option>
+                                <option value="ativo" {{ $dado->status == 'ativo' ? 'selected' : '' }}>Ativo</option>
+                                <option value="inativo" {{ $dado->status == 'inativo' ? 'selected' : '' }}>Inativo</option>
                             </select>
+
                         </div>
 
                         <div class="col">
@@ -154,11 +172,11 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                Tem certeza que deseja excluir o compromisso: {{$dado->nome}}?
+                                Tem certeza que deseja excluir a Unidade Curricular: {{ $dado->nome }}? 
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Não</button>
-                                <a type="button" class="btn btn-danger" href="/excluir/{{$dado->id}}">Sim</a>
+                                <a type="button" class="btn btn-danger" href="/excluirUc/{{$dado->id}}">Sim</a>
                             </div>
                         </div>
                     </div>

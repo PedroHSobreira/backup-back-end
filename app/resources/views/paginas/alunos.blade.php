@@ -101,21 +101,21 @@
                         </thead>
 
                         <tbody>
-                            @if ($ids->isEmpty())
+                            @if ($alunos->isEmpty())
                             <tr>
                                 <td colspan="8" class="text-center text-muted py-4">
                                     Nenhum aluno encontrado
                                 </td>
                             </tr>
                             @else
-                            @foreach ($ids as $aluno)
+                            @foreach ($alunos as $aluno)
                             <tr>
                                 <td>
                                     <div class="fw-semibold">{{ $aluno->nomeAluno }}</div>
                                     <small class="text-muted">{{ $aluno->emailAluno }}</small>
                                 </td>
 
-                                <td>{{ $aluno->matricula }}</td>
+                                <td>{{ $aluno->ra }}</td>
                                 <td>{{ $aluno->cpf }}</td>
                                 <td>{{ $aluno->telefone }}</td>
 
@@ -144,7 +144,7 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="/editarAlunos/{{$id->id}}"
+                                    <a href="/editarAlunos/{{$aluno->id}}"
                                         class="btn btn-sm btn-outline-dark me-1">
                                         <i class="bi bi-pencil"></i>
                                     </a>
@@ -171,7 +171,7 @@
                     </div>
 
                     <!-- Form -->
-                    <form action="inserirAluno" method="POST">
+                    <form action="/inserirAluno" method="POST">
                         @csrf
 
                         <div class="modal-body">
@@ -209,7 +209,7 @@
                                 <!-- Data de Matrícula -->
                                 <div class="col">
                                     <label class="form-label fw-semibold">Data de Matrícula</label>
-                                    <input type="text" name="" class="form-control" value="{{ now()->format('d/m/Y') }}"
+                                    <input type="text" class="form-control" value="{{ now()->format('d/m/Y') }}"
                                         readonly>
                                 </div>
                             </div>
@@ -243,7 +243,7 @@
                                 <!-- Carga Horária Diária -->
                                 <div class="col">
                                     <label class="form-label fw-semibold">Tipo de Matrícula *</label>
-                                    <select name="tipoMatricula" class="form-select">
+                                    <select name="tipo" class="form-select">
                                         <option value="pagante" selected>Pagante</option>
                                         <option value="bolsista">Bolsista</option>
                                     </select>
@@ -257,8 +257,20 @@
                                         <option value="inativo">Inativo</option>
                                     </select>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Senha</label>
+                                        <input type="text" name="senhaAluno" class="form-control" placeholder="Informe a senha do aluno" required>
+                                    </div>
+
+                                    <div class="col">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
 
                         <!-- Footer -->
                         <div class="modal-footer border-0 filter-tabs">

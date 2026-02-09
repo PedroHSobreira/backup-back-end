@@ -52,20 +52,20 @@
 
                 <!-- Card Turma -->
 
-                @if ($ids->isEmpty())
+                @if ($turmas->isEmpty())
 
                 <div colspan="8" class="text-center text-muted py-4">
                     Nenhuma turma encontrada
                 </div>
 
                 @else
-                @foreach ($ids as $turma)
+                @foreach ($turmas as $turma)
                 <div class="col-md-6 col-lg-4 float-start">
                     <div class="card rounded-4 h-100 p-2 hover-shadow">
                         <div class="card-body d-flex flex-column">
 
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h4 class="fw-bold">{{ $turma->codigo }}</h4>
+                                <h4 class="fw-bold">{{ $turma->codigoTurma }} </h4>
 
                                 @if ($turma->status === 'ativo')
                                 <span class="badge bg-success-subtle text-success rounded-pill px-3">
@@ -85,28 +85,34 @@
                             <div class="mb-2">
                                 <small class="text-muted">Docente:</small>
                                 <div class="fw-semibold">
-                                    {{ $turma->docente->nome ?? 'Não definido' }}
+                                    @if ($turma->docentes->isEmpty())
+                                        <div class="text-muted">Não definido</div>
+                                    @else
+                                        @foreach ($turma->docentes as $docente)
+                                            <div>{{ $docente->nomeDocente }}</div>
+                                        @endforeach
+                                    @endif
                                 </div>
                             </div>
 
                             <div class="mb-2 d-flex align-items-center gap-2">
                                 <i class="bi bi-people text-muted"></i>
                                 <span>
-                                    {{ $turma->alunos_count ?? $turma->alunos->count() }} alunos
+                                    {{ $turma->alunos->count() }} alunos
                                 </span>
                             </div>
 
                             <div class="mb-1">
                                 <small class="text-muted">Início:</small>
                                 <span class="fw-semibold">
-                                    {{ $turma->data_inicio->format('d/m/Y') }}
+                                    {{ \Carbon\Carbon::parse($turma->dataInicio)->format('d/m/Y') }}
                                 </span>
                             </div>
 
                             <div class="mb-3">
                                 <small class="text-muted">Término:</small>
                                 <span class="fw-semibold">
-                                    {{ $turma->data_fim->format('d/m/Y') }}
+                                    {{ \Carbon\Carbon::parse($turma->dataFim)->format('d/m/Y') }}
                                 </span>
                             </div>
 
@@ -116,7 +122,7 @@
                                     <i class="bi bi-eye"></i> Ver
                                 </a>
 
-                                <a href="/editarTurmas/{{$id->id}}" class="btn btn-outline-dark">
+                                <a href="/editarTurmas/{{$turma->id}}" class="btn btn-outline-dark">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             </div>
@@ -143,8 +149,9 @@
                     </div>
 
                     <!-- Form -->
-                    <form action="" method="POST">
+                    <form action="/inserirTurma" method="POST">
                         @csrf
+
 
                         <div class="modal-body">
                             <div class="row">
@@ -154,14 +161,14 @@
                                     <select name="curso_id" class="form-select" required>
                                         <option value="">Selecione o curso</option>
 
-                                        @if ($ids->isEmpty())
+                                        @if ($cursos->isEmpty())
 
                                         <div colspan="8" class="text-center text-muted py-4">
                                             Nenhum Curso encontrado
                                         </div>
 
                                         @else
-                                        @foreach ($ids as $curso)
+                                        @foreach ($cursos as $curso)
                                         <option value="{{ $curso->id }}">
                                             {{ $curso->nome }}
                                         </option>
@@ -181,14 +188,14 @@
                                     <label class="form-label fw-semibold">Selecionar Docentes</label>
 
                                     <div class="lista-scroll">
-                                        @if ($ids->isEmpty())
+                                        @if ($docentes->isEmpty())
 
                                         <div colspan="8" class="text-center text-muted py-4">
                                             Nenhum docente encontrada
                                         </div>
 
                                         @else
-                                        @foreach ($ids as $docente)
+                                        @foreach ($docentes as $docente)
                                         <div class="form-check">
                                             <input
                                                 class="form-check-input"
@@ -197,7 +204,7 @@
                                                 value="{{ $docente->id }}"
                                                 id="docente{{ $docente->id }}">
                                             <label class="form-check-label" for="docente{{ $docente->id }}">
-                                                {{ $docente->nome }}
+                                                {{ $docente->nomeDocente }}
                                             </label>
                                         </div>
                                         @endforeach
@@ -212,14 +219,14 @@
                                     <label class="form-label fw-semibold">Selecionar Alunos</label>
 
                                     <div class="lista-scroll">
-                                        @if ($ids->isEmpty())
+                                        @if ($alunos->isEmpty())
 
                                         <div colspan="8" class="text-center text-muted py-4">
                                             Nenhum aluno encontrado
                                         </div>
 
                                         @else
-                                        @foreach ($ids as $aluno)
+                                        @foreach ($alunos as $aluno)
                                         <div class="form-check">
                                             <input
                                                 class="form-check-input"
@@ -228,7 +235,7 @@
                                                 value="{{ $aluno->id }}"
                                                 id="aluno{{ $aluno->id }}">
                                             <label class="form-check-label" for="aluno{{ $aluno->id }}">
-                                                {{ $aluno->nome }}
+                                                {{ $aluno->nomeAluno }}
                                             </label>
                                         </div>
                                         @endforeach
@@ -241,13 +248,13 @@
                                 <!-- Data de Nascimento -->
                                 <div class="col">
                                     <label class="form-label fw-semibold">Data de Inicio *</label>
-                                    <input type="date" name="data_inicio" class="form-control" required>
+                                    <input type="date" name="dataInicio" class="form-control" required>
                                 </div>
 
-                                <!-- Data de Nascimento --> 
+                                <!-- Data de Nascimento -->
                                 <div class="col">
                                     <label class="form-label fw-semibold">Data de Término *</label>
-                                    <input type="date" name="data_termino" class="form-control" required>
+                                    <input type="date" name="dataFim" class="form-control" required>
                                 </div>
                             </div>
 

@@ -21,10 +21,10 @@ class alunoController extends Controller
         $telefone               = $request->input('telefone');
         $emailAluno             = $request->input('emailAluno');
         $senhaAluno             = $request->input('senhaAluno');
-        $dataCadastro           = $request->input('dataCadastro');
+        $dataMatricula          = now();
         $status                 = $request->input('status');
-        $tipoMatricula          = $request->input('tipoMatricula');
-
+        $tipo                   = $request->input('tipo');
+        $endereco               = $request->input('endereco');
 
         //chamando model
         $model = new alunoModel();
@@ -36,24 +36,25 @@ class alunoController extends Controller
         $model->telefone              = $telefone;
         $model->emailAluno            = $emailAluno;
         $model->senhaAluno            = $senhaAluno;
-        $model->dataCadastro          = $dataCadastro;
-        $model->tipoMatricula         = $tipoMatricula;
+        $model->dataMatricula         = $dataMatricula;
+        $model->tipo                  = $tipo;
         $model->status                = $status;
+        $model->endereco              = $endereco;
 
         $model->save();
-        return redirect('/');
+        return redirect('/alunos');
     } //fim do metodo inserir
 
     public function consultarAluno()
     {
-        $ids = alunoModel::all();
+        $alunos = alunoModel::all();
 
         $totalAlunos    = alunoModel::count();
-        $alunosPagantes = alunoModel::where('tipoMatricula', 'pagante')->count();
-        $alunosBolsistas = alunoModel::where('tipoMatricula', 'bolsista')->count();
+        $alunosPagantes = alunoModel::where('tipo', 'pagante')->count();
+        $alunosBolsistas = alunoModel::where('tipo', 'bolsista')->count();
 
         return view('paginas.alunos', compact(
-            'ids',
+            'alunos',
             'totalAlunos',
             'alunosPagantes',
             'alunosBolsistas'
@@ -69,13 +70,16 @@ class alunoController extends Controller
 
     public function atualizarAluno(Request $request, $id)
     {
-        alunoModel::where('id', $id)->update($request->all());
-        return redirect('/consultar');
+        alunoModel::where('id', $id)->update(
+            $request->except(['_token', '_method'])
+        );
+
+        return redirect('/alunos');
     } //fim do metodo atualizar
 
-    public function excluirAluno(Request $request, $id)
+    public function excluirAluno($id)
     {
-        alunoModel::where('id', $id)->delete($request->all());
-        return redirect('/consultar');
+        alunoModel::where('id', $id)->delete();
+        return redirect('/alunos');
     } //fim do metodo excluir
 }

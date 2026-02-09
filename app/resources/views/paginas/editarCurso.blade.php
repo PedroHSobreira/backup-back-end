@@ -44,7 +44,7 @@
 
             <form action="/atualizarCurso/{{ $dado->id }}" method="POST">
                 @csrf
-            
+
                 <div class="modal-body">
                     <div class="row">
                         <!-- Nome -->
@@ -54,15 +54,31 @@
                                 required>
                         </div>
 
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label fw-semibold">Sigla do Curso *</label>
+                                <input type="text" name="sigla" class="form-control" value="{{ $dado->sigla }}" maxlength="5"
+                                    required>
+                            </div>
+                        </div>
+
+
                         <!-- Tipo -->
                         <div class="col">
                             <label class="form-label fw-semibold">Tipo *</label>
                             <select name="tipo" id="tipo" class="form-select" required>
                                 <option value="">Selecione o tipo</option>
-                                <option value="tecnico">Técnico</option>
-                                <option value="graduacao">Graduação</option>
-                                <option value="livre">Curso Livre</option>
+                                <option value="tecnico" {{ $dado->tipo == 'tecnico' ? 'selected' : '' }}>
+                                    Técnico
+                                </option>
+                                <option value="graduacao" {{ $dado->tipo == 'graduacao' ? 'selected' : '' }}>
+                                    Graduação
+                                </option>
+                                <option value="livre" {{ $dado->tipo == 'livre' ? 'selected' : '' }}>
+                                    Curso Livre
+                                </option>
                             </select>
+
                         </div>
                     </div>
 
@@ -90,7 +106,7 @@
                             <input type="date" name="dataInicio" id="dataInicio" class="form-control"
                                 value="{{$dado->dataInicio}}" required>
                         </div>
-                        
+
                         <!-- Preço -->
                         <div class="col">
                             <label class="form-label fw-semibold">Preço (R$) *</label>
@@ -122,13 +138,18 @@
                         <div class="col">
                             <label class="form-label fw-semibold">Status</label>
                             <select name="situacao" class="form-select">
-                                <option value="ativo" selected>Ativo</option>
-                                <option value="inativo">Inativo</option>
+                                <option value="ativo" {{ $dado->situacao == 'ativo' ? 'selected' : '' }}>
+                                    Ativo
+                                </option>
+                                <option value="inativo" {{ $dado->situacao == 'inativo' ? 'selected' : '' }}>
+                                    Inativo
+                                </option>
                             </select>
+
                         </div>
 
                         <div class="col">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -154,7 +175,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                Tem certeza que deseja excluir o compromisso: {{$dado->nome}}?
+                                Tem certeza que deseja excluir o curso: {{ $dado->nome }}?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Não</button>

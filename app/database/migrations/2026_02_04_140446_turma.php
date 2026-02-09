@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -7,31 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        //criando a table
-        schema::create('turma', function(Blueprint $table){
+        Schema::create('turma', function (Blueprint $table) {
             $table->increments('id');
-            $table->longtext('codigoTurma');
+
+            $table->unsignedInteger('curso_id');
+            $table->foreign('curso_id')->references('id')->on('curso')->onDelete('cascade');
+
+            $table->text('codigoTurma');
             $table->date('dataInicio');
             $table->date('dataFim');
+            $table->enum('turno', ['M', 'T', 'N'])->default('M');
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        //excluir caso exista
-        schema::dropIfExists('turma');
+        Schema::dropIfExists('turma');
     }
 };

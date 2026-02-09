@@ -7,7 +7,7 @@
                     Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/cursos"><i class="bi bi-clipboard2-check me-1"></i>
+                <a class="btn btn-primary" href="/cursos"><i class="bi bi-clipboard2-check me-1"></i>
                     Cursos</a>
             </li>
             <li class="nav-item">
@@ -17,7 +17,8 @@
                 <a class="btn btn-primary" href="/docentes"><i class="bi bi-calendar2-event me-1"></i> Docentes</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/alunos"><i class="bi bi-graph-up-arrow me-1"></i> Alunos</a>
+                <a class="btn btn-primary active" href="/alunos"><i class="bi bi-graph-up-arrow me-1"></i>
+                    Alunos</a>
             </li>
             <li class="nav-item">
                 <a class="btn btn-primary" href="/turmas"><i class="bi bi-graph-up-arrow me-1"></i> Turmas</a>
@@ -37,19 +38,21 @@
                     <h2 class="fw-bold ">Alunos</h2>
                     <p class="text-muted">Editar os alunos matriculados</p>
                 </div>
-                <a href="/alunos.html" class="text-end btn btn-primary">
+                <a href="/alunos" class="text-end btn btn-primary">
                     <i class="bi bi-arrow-left me-1"></i> Voltar
                 </a>
             </div>
 
-            <form action="../atualizar/{{$dado->id}}" method="POST">
+            <form action="../atualizarAluno/{{$dado->id}}" method="POST">
+                @csrf
 
                 <div class="modal-body">
                     <div class="row">
                         <!-- Nome -->
                         <div class="col">
                             <label class="form-label fw-semibold">Nome Completo *</label>
-                            <input type="text" name="nomeAluno" class="form-control" placeholder="Nome completo do aluno" value="{{$dado->nome}}" required>
+                            <input type="text" name="nomeAluno" class="form-control" placeholder="Nome completo do aluno"
+                                value="{{$dado->nomeAluno}}" required>
                         </div>
 
                     </div>
@@ -58,12 +61,14 @@
                         <!-- RA do Aluno -->
                         <div class="col">
                             <label class="form-label fw-semibold">RA (Registro Acadêmico) *</label>
-                            <input type="text" name="ra" class="form-control" placeholder="1140279318" value="{{$dado->ra}}" required>
+                            <input type="text" name="ra" class="form-control" placeholder="1140279318"
+                                value="{{$dado->ra}}" required>
                         </div>
                         <!-- CPF -->
                         <div class="col">
                             <label class="form-label fw-semibold">CPF *</label>
-                            <input type="text" name="cpf" class="form-control" placeholder="000.000.000-00" value="{{$dado->cpf}}" required>
+                            <input type="text" name="cpf" class="form-control" placeholder="000.000.000-00"
+                                value="{{$dado->cpf}}" required>
                         </div>
                     </div>
 
@@ -71,13 +76,13 @@
                         <!-- Data de Nascimento -->
                         <div class="col">
                             <label class="form-label fw-semibold">Data de Nascimento *</label>
-                            <input type="date" name="dataNascimento" class="form-control" value="{{$dado->data_nascimento}}" required>
+                            <input type="date" name="dataNascimento" class="form-control"
+                                value="{{$dado->dataNascimento}}" required>
                         </div>
                         <!-- Data de Matrícula -->
                         <div class="col">
                             <label class="form-label fw-semibold">Data de Matrícula</label>
-                            <input type="text" name="dataCadastro" class="form-control" value="{{ now()->format('d/m/Y') }}"
-                                readonly>
+                            <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($dado->dataMatricula)->format('d/m/Y') }}" readonly>
                         </div>
                     </div>
 
@@ -85,7 +90,8 @@
                         <!-- Endereço -->
                         <div class="col">
                             <label class="form-label fw-semibold">Endereço *</label>
-                            <input type="text" name="endereco" class="form-control" placeholder="Rua, número, bairro, cidade" value="{{$dado->endereco}}" required>
+                            <input type="text" name="endereco" class="form-control"
+                                placeholder="Rua, número, bairro, cidade" value="{{$dado->endereco}}" required>
                         </div>
                     </div>
 
@@ -93,13 +99,15 @@
                         <!-- Telefone -->
                         <div class="col">
                             <label class="form-label fw-semibold">Telefone *</label>
-                            <input type="text" name="telefone" class="form-control" placeholder="(00) 00000-0000" value="{{$dado->telefone}}" required>
+                            <input type="text" name="telefone" class="form-control" placeholder="(00) 00000-0000"
+                                value="{{$dado->telefone}}" required>
                         </div>
 
                         <!-- Email -->
                         <div class="col">
                             <label class="form-label fw-semibold">Email *</label>
-                            <input type="text" name="email" class="form-control" placeholder="email@senacsp.edu.br" value="{{$dado->emailAluno}}" required>
+                            <input type="text" name="emailAluno" class="form-control" placeholder="email@senacsp.edu.br"
+                                value="{{$dado->emailAluno}}" required>
                         </div>
                     </div>
 
@@ -107,9 +115,13 @@
                         <!-- Carga Horária Diária -->
                         <div class="col">
                             <label class="form-label fw-semibold">Tipo de Matrícula *</label>
-                            <select name="tipoMatricula" class="form-select">
-                                <option value="pagante" selected>Pagante</option>
-                                <option value="bolsista">Bolsista</option>
+                            <select name="tipo" class="form-select">
+                                <option value="pagante" {{ $dado->tipo == 'pagante' ? 'selected' : '' }}>
+                                    Pagante
+                                </option>
+                                <option value="bolsista" {{ $dado->tipo == 'bolsista' ? 'selected' : '' }}>
+                                    Bolsista
+                                </option>
                             </select>
                         </div>
 
@@ -117,9 +129,26 @@
                         <div class="col">
                             <label class="form-label fw-semibold">Status</label>
                             <select name="status" class="form-select">
-                                <option value="ativo" selected>Ativo</option>
-                                <option value="inativo">Inativo</option>
+                                <option value="ativo" {{ $dado->status == 'ativo' ? 'selected' : '' }}>
+                                    Ativo
+                                </option>
+                                <option value="inativo" {{ $dado->status == 'inativo' ? 'selected' : '' }}>
+                                    Inativo
+                                </option>
                             </select>
+
+                        </div>
+
+                        <!-- Senha -->
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label fw-semibold">Senha</label>
+                                    <input type="password" name="senhaAluno" class="form-control" required>
+                            </div>
+
+                            <div class="col">
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -146,11 +175,11 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                Tem certeza que deseja excluir o compromisso: {{$dado->nome}}?
+                                Tem certeza que deseja excluir o aluno: {{ $dado->nomeAluno }}?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Não</button>
-                                <a type="button" class="btn btn-danger" href="/excluir/{{$dado->id}}">Sim</a>
+                                <a type="button" class="btn btn-danger" href="/excluirAluno/{{$dado->id}}">Sim</a>
                             </div>
                         </div>
                     </div>

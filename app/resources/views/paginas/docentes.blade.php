@@ -47,13 +47,13 @@
 
             <!-- Cards -->
             <div class="row g-4">
-                @if ($ids->isEmpty())
+                @if ($docentes->isEmpty())
                 <div colspan="8" class="text-center text-muted py-4">
                     Nenhum Docente encontrado
                 </div>
                 @else
 
-                @foreach ($ids as $docente)
+                @foreach ($docentes as $docente)
                 <div class="col-md-6 col-lg-4 float-start">
                     <div class="card docente-card p-4 h-100 hover-shadow">
 
@@ -62,8 +62,8 @@
                                 <i class="bi bi-mortarboard-fill"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold mb-0">{{ $docente->nome }}</h6>
-                                <small class="text-muted">{{ $docente->email }}</small>
+                                <h6 class="fw-bold mb-0">{{ $docente->nomeDocente }}</h6>
+                                <small class="text-muted">{{ $docente->emailDocente }}</small>
                             </div>
                         </div>
 
@@ -73,7 +73,7 @@
                             <li><strong>Formação:</strong> {{ $docente->formacao }}</li>
                             <li><strong>Especialização:</strong> {{ $docente->especializacao }}</li>
                             <li><strong>Turno:</strong> {{ $docente->turno }}</li>
-                            <li><strong>Carga Horária:</strong> {{ $docente->carga_horaria }}</li>
+                            <li><strong>Carga Horária:</strong> {{ $docente->cargaHoraria }}</li>
                         </ul>
 
                         <div class="d-flex justify-content-between align-items-center mt-auto p-1">
@@ -93,7 +93,7 @@
                         </div>
 
                         <div class="mt-auto d-flex">
-                            <a href="/editarDocentes/{{$id->id}}" class="btn btn-outline-dark btn-sm w-100">
+                            <a href="/editarDocentes/{{$docente->id}}" class="btn btn-outline-dark btn-sm w-100">
                                 <i class="bi bi-pencil me-1"></i> Editar
                             </a>
                         </div>
@@ -119,7 +119,7 @@
                     </div>
 
                     <!-- Form -->
-                    <form action="/inserir" method="POST">
+                    <form action="/inserirDocente" method="POST">
                         @csrf
 
                         <div class="modal-body">
@@ -128,7 +128,7 @@
                                 <!-- Nome -->
                                 <div class="col">
                                     <label class="form-label fw-semibold">Nome Completo *</label>
-                                    <input type="text" name="nome" class="form-control"
+                                    <input type="text" name="nomeDocente" class="form-control"
                                         placeholder="Nome completo do docente" required>
                                 </div>
 
@@ -229,6 +229,17 @@
                                         <option value="ativo" selected>Ativo</option>
                                         <option value="inativo">Inativo</option>
                                     </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Senha</label>
+                                        <input type="text" name="senhaDocente" class="form-control" placeholder="Informe a senha do docente" required>
+                                    </div>
+
+                                    <div class="col">
+
+                                    </div>
                                 </div>
                             </div>
                         </div>

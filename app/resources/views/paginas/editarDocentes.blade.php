@@ -10,11 +10,11 @@
                 <a class="btn btn-primary" href="/cursos"><i class="bi bi-clipboard2-check me-1"></i> Cursos</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary active " href="/unidadesCurriculares"><i class="bi bi-people me-1"></i>
+                <a class="btn btn-primary" href="/unidadesCurriculares"><i class="bi bi-people me-1"></i>
                     UCs</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/docentes"><i class="bi bi-calendar2-event me-1"></i> Docentes</a>
+                <a class="btn btn-primary active" href="/docentes"><i class="bi bi-calendar2-event me-1"></i> Docentes</a>
             </li>
             <li class="nav-item">
                 <a class="btn btn-primary" href="/alunos"><i class="bi bi-graph-up-arrow me-1"></i> Alunos</a>
@@ -39,21 +39,23 @@
                     <p class="text-muted ">Editar o docente cadastrado</p>
                 </div>
 
-                <a href="/docentes.html" class="text-end btn btn-primary">
+                <a href="/docentes" class="text-end btn btn-primary">
                     <i class="bi bi-arrow-left me-1"></i> Voltar
                 </a>
             </div>
 
 
-            <form action="../atualizar/{{$dado->id}}" method="POST">
+            <form action="/atualizarDocente/{{$dado->id}}" method="POST">
+                @csrf
+
                 <div class="modal-body">
-                    
+
                     <div class="row">
 
                         <!-- Nome -->
                         <div class="col">
                             <label class="form-label fw-semibold">Nome Completo *</label>
-                            <input type="text" name="nome" class="form-control" placeholder="Nome completo do docente" value="{{$dado->nome}}"
+                            <input type="text" name="nomeDocente" class="form-control" placeholder="Nome completo do docente" value="{{$dado->nomeDocente}}"
                                 required>
                         </div>
 
@@ -69,7 +71,7 @@
                         <!-- Data de Nascimento -->
                         <div class="col">
                             <label class="form-label fw-semibold">Data de Nascimento *</label>
-                            <input type="date" name="data_nascimento" class="form-control" value="{{$dado->data_nascimento}}" required>
+                            <input type="date" name="dataNascimento" class="form-control" value="{{$dado->dataNascimento}}" required>
                         </div>
                     </div>
 
@@ -93,7 +95,7 @@
                         <!-- Email -->
                         <div class="col">
                             <label class="form-label fw-semibold">Email *</label>
-                            <input type="text" name="email" class="form-control" placeholder="email@senacsp.edu.br" value="{{$dado->email}}" required>
+                            <input type="text" name="emailDocente" class="form-control" placeholder="email@senacsp.edu.br" value="{{$dado->emailDocente}}" required>
                         </div>
                     </div>
 
@@ -101,12 +103,12 @@
                         <!-- Formação -->
                         <div class="col">
                             <label class="form-label fw-semibold">Formação (Graduação)</label>
-                            <input type="text" name="formacao" class="form-control" value="{{$dado->formacao}}" placeholder="Ex: Ciência da Computação">
+                            <input type="text" name="formacao" class="form-control" value="{{$dado->formacao}}" placeholder="Ex: Ciência da Computação" required>
                         </div>
                         <!-- Especialização -->
                         <div class="col">
                             <label class="form-label fw-semibold">Especialização (Pós)</label>
-                            <input type="text" name="especializacao" class="form-control" value="{{$dado->especializacao}}" placeholder="Ex: Banco de dados">
+                            <input type="text" name="especializacao" class="form-control" value="{{$dado->especializacao}}" placeholder="Ex: Banco de dados" required>
                         </div>
                     </div>
 
@@ -115,10 +117,11 @@
                         <div class="col">
                             <label class="form-label fw-semibold">Carga Horária Diária *</label>
                             <select name="cargaHoraria" class="form-select">
-                                <option value="4">4 horas</option>
-                                <option value="6">6 horas</option>
-                                <option value="8" selected>8 horas</option>
+                                <option value="4" {{ $dado->cargaHoraria == 4 ? 'selected' : '' }}>4 horas</option>
+                                <option value="6" {{ $dado->cargaHoraria == 6 ? 'selected' : '' }}>6 horas</option>
+                                <option value="8" {{ $dado->cargaHoraria == 8 ? 'selected' : '' }}>8 horas</option>
                             </select>
+
                         </div>
 
                         <!-- Turno de Trabalho -->
@@ -126,11 +129,24 @@
                             <label class="form-label fw-semibold">Turno *</label>
                             <select name="turno" class="form-select" required>
                                 <option value="">Selecione o turno</option>
-                                <option value="manha">Manhã</option>
-                                <option value="tarde">Tarde</option>
-                                <option value="noite">Noite</option>
-                                <option value="integral">Integral</option>
+
+                                <option value="manha" {{ $dado->turno == 'manha' ? 'selected' : '' }}>
+                                    Manhã
+                                </option>
+
+                                <option value="tarde" {{ $dado->turno == 'tarde' ? 'selected' : '' }}>
+                                    Tarde
+                                </option>
+
+                                <option value="noite" {{ $dado->turno == 'noite' ? 'selected' : '' }}>
+                                    Noite
+                                </option>
+
+                                <option value="integral" {{ $dado->turno == 'integral' ? 'selected' : '' }}>
+                                    Integral
+                                </option>
                             </select>
+
                         </div>
                     </div>
 
@@ -138,16 +154,33 @@
                         <!-- Carga Horária Diária -->
                         <div class="col">
                             <label class="form-label fw-semibold">Data de Cadastro</label>
-                            <input type="text" class="form-control" value="{{$dado->}}" readonly>
+                            <input type="text" class="form-control" value="{{$dado->dataCadastro}}" readonly>
                         </div>
 
                         <!-- Status -->
                         <div class="col">
                             <label class="form-label fw-semibold">Status</label>
                             <select name="status" class="form-select">
-                                <option value="ativo" selected>Ativo</option>
-                                <option value="inativo">Inativo</option>
+                                <option value="ativo" {{ $dado->status == 'ativo' ? 'selected' : '' }}>
+                                    Ativo
+                                </option>
+                                <option value="inativo" {{ $dado->status == 'inativo' ? 'selected' : '' }}>
+                                    Inativo
+                                </option>
                             </select>
+
+                        </div>
+
+                        <!-- Senha -->
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label fw-semibold">Senha</label>
+                                <input type="text" name="senhaDocente" class="form-control" value="{{$dado->senha}}" required>
+                            </div>
+
+                            <div class="col">
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -178,7 +211,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Não</button>
-                                <a type="button" class="btn btn-danger" href="/excluir/{{$dado->id}}">Sim</a>
+                                <a type="button" class="btn btn-danger" href="/excluirDocente/{{$dado->id}}">Sim</a>
                             </div>
                         </div>
                     </div>

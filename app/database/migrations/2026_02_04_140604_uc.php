@@ -14,16 +14,20 @@ return new class extends Migration
     public function up()
     {
         //criando colunas
-        schema::create('uc', function(Blueprint $table){
+        schema::create('uc', function (Blueprint $table) {
             $table->increments('id');
             $table->text('codigoUc');
             $table->longtext('nome');
             $table->integer('cargaHoraria');
-            $table->longtext('dias');
-            $table->decimal('presencaMinima',10,2);
+            $table->longtext('horario');
+            $table->decimal('presencaMinima', 10, 2);
             $table->longtext('descricao');
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
+            $table->longtext('dias');
+            $table->unsignedInteger('cursoCodigo');
             $table->timestamps();
+
+            $table->foreign('cursoCodigo')->references('id')->on('curso')->onDelete('cascade');
         });
     }
 

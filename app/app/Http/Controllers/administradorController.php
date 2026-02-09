@@ -7,6 +7,7 @@ use App\Models\alunoModel;
 use App\Models\cursoModel;
 use App\Models\docenteModel;
 use App\Models\turmaModel;
+use App\Models\ucModel;
 use Illuminate\Http\Request;
 
 class administradorController extends Controller
@@ -27,7 +28,6 @@ class administradorController extends Controller
         $dataCadastro           = $request->input('dataCadastro');
         $status                 = $request->input('status');
 
-
         //chamando model
         $model = new administradorModel();
 
@@ -40,27 +40,39 @@ class administradorController extends Controller
         $model->dataCadastro     = $dataCadastro;
         $model->status           = $status;
 
+
         $model->save();
         return redirect('/');
     } //fim do metodo inserir
 
     public function consultarAdministrador()
     {
-        $ids = administradorModel::all();
-
+        // cards do dashboard
         $totalCursos   = cursoModel::count();
         $totalDocentes = docenteModel::count();
         $totalAlunos   = alunoModel::count();
         $turmasAtivas  = turmaModel::where('status', 'ativo')->count();
 
+        // dados para gestão de vínculos (modais)
+        $alunos   = alunoModel::all();
+        $turmas   = turmaModel::with('curso')->get();
+        $cursos   = cursoModel::all();
+        $docentes = docenteModel::all();
+        $ucs      = ucModel::all();
+
         return view('paginas.dashboardAdm', compact(
             'totalCursos',
             'totalDocentes',
             'totalAlunos',
-            'turmasAtivas'
+            'turmasAtivas',
+            'alunos',
+            'turmas',
+            'cursos',
+            'docentes',
+            'ucs'
         ));
-        return view('paginas.dashboardAdm', compact('ids'));
-    } //fim do metodo de consulta
+    } //fim do metodo consultar
+
 
     public function editarAdministrador($id)
     {

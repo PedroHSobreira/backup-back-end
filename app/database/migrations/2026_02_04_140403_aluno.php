@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('cpf');
             $table->date('dataNascimento');
             $table->text('telefone');
+            $table->longtext('endereco');
             $table->longtext('emailAluno');
             $table->longtext('senhaAluno');
             $table->date('dataMatricula');

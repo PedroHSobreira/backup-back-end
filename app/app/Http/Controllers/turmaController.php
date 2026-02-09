@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\turmaModel;
 use App\Models\cursoModel;
+use App\Models\docenteModel;
+use App\Models\alunoModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -12,67 +14,103 @@ class turmaController extends Controller
 {
     public function cadastrarTurma()
     {
-        return view('paginas.');
+        return view('paginas.turmas');
     } //fim do metodo de direcionamento
 
     public function inserirTurma(Request $request)
     {
         $cursoModel = cursoModel::findOrFail($request->curso_id);
-        //busca a última turma desse curso
+
         $ultimaTurma = turmaModel::where('curso_id', $cursoModel->id)
+            ->where('turno', $request->turno)
             ->orderBy('id', 'desc')
             ->first();
-        //define número sequencial
+
         if ($ultimaTurma) {
-            // Ex: TI22M → extrai 22
             preg_match('/(\d+)/', $ultimaTurma->codigoTurma, $matches);
             $numeroSequencial = intval($matches[1]) + 1;
         } else {
-            $numeroSequencial = 1; // número inicial padrão
+            $numeroSequencial = 1;
         }
 
-        //monta o código da turma
-        $codigoTurma = $cursoModel->codigoCurso . $numeroSequencial . $request->turno;
+        $codigoTurma = $cursoModel->sigla . $numeroSequencial . $request->turno;
 
-        $codigoTurma    = $request->input('codigoTurma');
-        $dataInicio     = $request->input('dataInicio');
-        $dataFim        = $request->input('dataFim');
-        $turno          = $request->input('turno');
-        $status         = $request->input('status');
-
-        //chamando model
         $model = new turmaModel();
-        $model->codigoTurma     = $codigoTurma;
-        $model->dataInicio      = $dataInicio;
-        $model->dataFim         = $dataFim;
-        $model->turno           =   $turno;
-        $model->status          = $status;
+        $model->curso_id    = $cursoModel->id;
+        $model->codigoTurma = $codigoTurma;
+        $model->dataInicio  = $request->dataInicio;
+        $model->dataFim     = $request->dataFim;
+        $model->turno       = $request->turno;
+        $model->status      = $request->status;
 
         $model->save();
-        return redirect('/');
+
+        // vincular docente
+        if ($request->has('docentes')) {
+            $model->docentes()->sync($request->docentes);
+        }
+
+        // vincular aluno
+        if ($request->has('alunos')) {
+            $model->alunos()->sync($request->alunos);
+        }
+
+        return redirect('/turmas');
     } //fim do metodo inserir
 
     public function consultarTurma()
     {
-        $ids = turmaModel::all();
-        return view('paginas.turmas', compact('ids'));
-    } //fim do metodo de consulta
+        $turmas   = turmaModel::with(['curso', 'docentes', 'alunos'])->get();
+        $cursos   = cursoModel::all();
+        $docentes = docenteModel::all();
+        $alunos   = alunoModel::all();
+
+        return view('paginas.turmas', compact(
+            'turmas',
+            'cursos',
+            'docentes',
+            'alunos'
+        ));
+    } //fim do metodo consultar
+
 
     public function editarTurma($id)
     {
-        $dado = turmaModel::findOrFail($id);
-        return view('paginas.editarTurmas', compact('dado'));
+        $dado     = turmaModel::findOrFail($id);
+        $cursos   = cursoModel::all();
+        $docentes = docenteModel::all();
+        $alunos   = alunoModel::all();
+
+        return view('paginas.editarTurmas', compact(
+            'dado',
+            'cursos',
+            'docentes',
+            'alunos'
+        ));
     } //fim do metodo editar
 
     public function atualizarTurma(Request $request, $id)
     {
-        turmaModel::where('id', $id)->update($request->all());
-        return redirect('/consultar');
+        $turma = turmaModel::findOrFail($id);
+
+        $turma->update(
+            $request->except(['_token', 'docentes', 'alunos'])
+        );
+
+        if ($request->has('docentes')) {
+            $turma->docentes()->sync($request->docentes);
+        }
+
+        if ($request->has('alunos')) {
+            $turma->alunos()->sync($request->alunos);
+        }
+
+        return redirect('/turmas');
     } //fim do metodo atualizar
 
-    public function excluirTurma(Request $request, $id)
+    public function excluirTurma($id)
     {
-        turmaModel::where('id', $id)->delete($request->all());
-        return redirect('/consultar');
+        turmaModel::where('id', $id)->delete();
+        return redirect('/turmas');
     } //fim do metodo excluir
 }

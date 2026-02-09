@@ -25,10 +25,12 @@ return new class extends Migration
             $table->longtext('especializacao');
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
             $table->date('dataCadastro');
-            $table->integer('cargaHorario');
+            $table->integer('cargaHoraria');
             $table->longtext('turno');
             $table->longtext('senhaDocente');
             $table->longtext('endereco');
+
+            $table->timestamps();
         });
         
     }

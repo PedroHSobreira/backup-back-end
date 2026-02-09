@@ -26,6 +26,7 @@ return new class extends Migration
             $table->integer('bolsas');
             $table->date('dataInicio');
             $table->longtext('situacao');
+            $table->text('sigla');
             $table->timestamps();
         });
     }

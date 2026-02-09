@@ -1,16 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\docenteModel;
 use Illuminate\Http\Request;
 
 class docenteController extends Controller
 {
-    public function cadastrarDocente(){
-        return view('paginas.docente');
-    }//fim do metodo de direcionamento
+    public function cadastrarDocente()
+    {
+        return view('paginas.docentes');
+    } //fim do metodo de direcionamento
 
-    public function inserirDocente(Request $request){
+    public function inserirDocente(Request $request)
+    {
+
         $nomeDocente            = $request->input('nomeDocente');
         $cpf                    = $request->input('cpf');
         $dataNascimento         = $request->input('dataNascimento');
@@ -19,17 +23,18 @@ class docenteController extends Controller
         $formacao               = $request->input('formacao');
         $especializacao         = $request->input('especializacao');
         $status                 = $request->input('status');
-        $dataCadastro           = $request->input('dataCadastro');
+        $dataCadastro           = now();
         $cargaHoraria           = $request->input('cargaHoraria');
         $turno                  = $request->input('turno');
         $senhaDocente           = $request->input('senhaDocente');
         $endereco               = $request->input('endereco');
 
 
+
         //chamando model
         $model = new docenteModel();
 
-        $model->nomedocente                     = $nomeDocente;
+        $model->nomeDocente                     = $nomeDocente;
         $model->cpf                             = $cpf;
         $model->dataNascimento                  = $dataNascimento;
         $model->telefone                        = $telefone;
@@ -41,29 +46,37 @@ class docenteController extends Controller
         $model->cargaHoraria                    = $cargaHoraria;
         $model->turno                           = $turno;
         $model->senhaDocente                    = $senhaDocente;
-        $model->endereco                        = $endereco;  
+        $model->endereco                        = $endereco;
 
         $model->save();
-        return redirect('/');
-    }//fim do metodo inserir
+        return redirect('/docentes');
+    } //fim do metodo inserir
 
-    public function consultarDocente(){
-        $ids = docenteModel::all();
-        return view('paginas.docentes',compact('ids'));
-    }//fim do metodo de consulta
+    public function consultarDocente()
+    {
+        $docentes = docenteModel::all();
+        return view('paginas.docentes', compact('docentes'));
+    } //fim do metodo consultar
 
-    public function editarDocente($id){
+
+    public function editarDocente($id)
+    {
         $dado = docenteModel::findOrFail($id);
         return view('paginas.editarDocentes', compact('dado'));
-    }//fim do metodo editar
+    } //fim do metodo editar
 
-    public function atualizarDocente (Request $request, $id){
-        docenteModel::where('id', $id)->update($request->all());
-        return redirect('/consultar');
-    }//fim do metodo atualizar
+    public function atualizarDocente(Request $request, $id)
+    {
+        docenteModel::where('id', $id)->update(
+            $request->except(['_token', '_method'])
+        );
 
-    public function excluirDocente (Request $request, $id){
-        docenteModel::where('id', $id)->delete($request->all());
-        return redirect('/consultar');
-    }//fim do metodo excluir
+        return redirect('/docentes');
+    } //fim do metodo atualizar
+
+    public function excluirDocente($id)
+    {
+        docenteModel::where('id', $id)->delete();
+        return redirect('/docentes');
+    } //fim do metodo excluir
 }
