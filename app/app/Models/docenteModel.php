@@ -10,6 +10,10 @@ class docenteModel extends Model
     use HasFactory;
     protected $table = 'docente';
 
+    protected $casts = [
+        'turno' => 'array'
+    ];
+
     public function turmas()
     {
         return $this->belongsToMany(
@@ -17,6 +21,16 @@ class docenteModel extends Model
             'turma_docente',
             'docente_id',
             'turma_id'
+        );
+    }
+
+    public function ucs()
+    {
+        return $this->belongsToMany(
+            ucModel::class,
+            'docente_uc',
+            'docente_id',
+            'uc_id'
         );
     }
 }

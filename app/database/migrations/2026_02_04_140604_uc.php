@@ -19,11 +19,9 @@ return new class extends Migration
             $table->text('codigoUc');
             $table->longtext('nome');
             $table->integer('cargaHoraria');
-            $table->longtext('horario');
             $table->decimal('presencaMinima', 10, 2);
             $table->longtext('descricao');
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
-            $table->longtext('dias');
             $table->unsignedInteger('cursoCodigo');
             $table->timestamps();
 

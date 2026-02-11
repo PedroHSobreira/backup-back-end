@@ -17,6 +17,7 @@ return new class extends Migration
         schema::create('aluno', function(Blueprint $table){
             $table->increments('id');
             $table->longtext('nomeAluno');
+            $table->text('intencao');
             $table->integer('ra');
             $table->text('cpf');
             $table->date('dataNascimento');

@@ -14,19 +14,26 @@ class cursoController extends Controller
 
     public function inserirCurso(Request $request)
     {
+
+        $request->validate([
+            'dias' => 'required|array|min:1'
+        ], [
+            'dias.required' => 'Selecione pelo menos um dia da semana.',
+            'dias.min' => 'Selecione pelo menos um dia da semana.'
+        ]);
+
         $id                 = $request->input('id');
         $nome               = $request->input('nome');
         $tipo               = $request->input('tipo');
         $cargaHoraria       = $request->input('cargaHoraria');
-        $turno              = $request->input('turno');
-        $horario            = $request->input('horario');
         $preco              = $request->input('preco');
         $vagas              = $request->input('vagas');
         $bolsas             = $request->input('bolsas');
-        $dataInicio         = $request->input('dataInicio');
         $situacao           = $request->input('situacao');
         $sigla              = $request->input('sigla');
+        $dias               = $request->input('dias');
 
+        $dias = $request->input('dias', []);
 
         //chamando model
         $model = new cursoModel();
@@ -35,14 +42,12 @@ class cursoController extends Controller
         $model->nome             = $nome;
         $model->tipo             = $tipo;
         $model->cargaHoraria     = $cargaHoraria;
-        $model->turno            = $turno;
-        $model->horario          = $horario;
         $model->preco            = $preco;
         $model->vagas            = $vagas;
         $model->bolsas           = $bolsas;
-        $model->dataInicio       = $dataInicio;
         $model->situacao         = $situacao;
         $model->sigla            = $sigla;
+        $model->dias             = $dias;
 
         $model->save();
         return redirect('/cursos');
@@ -62,12 +67,22 @@ class cursoController extends Controller
 
     public function atualizarCurso(Request $request, $id)
     {
-        cursoModel::where('id', $id)->update(
-            $request->except(['_token', '_method'])
-        );
+        $request->validate([
+            'dias' => 'required|array|min:1'
+        ], [
+            'dias.required' => 'Selecione pelo menos um dia da semana.',
+            'dias.min' => 'Selecione pelo menos um dia da semana.'
+        ]);
+        
+        $dados = $request->except(['_token', '_method']);
+
+        $dados['dias'] = $request->input('dias', []);
+
+        cursoModel::where('id', $id)->update($dados);
 
         return redirect('/cursos');
-    } //fim do metodo atualizar
+    } // fim do metodo atualizar
+
 
     public function excluirCurso($id)
     {

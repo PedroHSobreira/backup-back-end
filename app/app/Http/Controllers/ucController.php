@@ -18,10 +18,8 @@ class ucController extends Controller
         $codigoUc           = $request->input('codigoUc');
         $nome               = $request->input('nome');
         $cargaHoraria       = $request->input('cargaHoraria');
-        $dias               = $request->input('dias');
         $presencaMinima     = $request->input('presencaMinima');
         $descricao          = $request->input('descricao');
-        $horario            = $request->input('horario');
         $status             = $request->input('status');
         $cursoCodigo        = $request->input('cursoCodigo');
 
@@ -31,12 +29,9 @@ class ucController extends Controller
         $model->codigoUc       = $codigoUc;
         $model->nome           = $nome;
         $model->cargaHoraria   = $cargaHoraria;
-        $model->dias           = $dias;
         $model->presencaMinima = $presencaMinima;
         $model->descricao      = $descricao;
-        $model->horario        = $horario;
         $model->status         = $status;
-        $model->dias           = $dias;
         $model->cursoCodigo    = $cursoCodigo;
 
         $model->save();

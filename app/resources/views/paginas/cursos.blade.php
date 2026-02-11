@@ -2,30 +2,28 @@
 
     <div class="container-xl py-4 shadow">
         <!-- Abas -->
-
         <ul class="nav nav-pills gap-2 mb-4">
             <li class="nav-item">
-                <a class="btn btn-primary" href="/dashboardAdm"><i class="bi bi-speedometer2 me-1"></i>
+                <a class="btn btn-primary" href="dashboardAdm"><i class="bi bi-bar-chart"></i>
                     Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/cursos"><i class="bi bi-clipboard2-check me-1"></i>
-                    Cursos</a>
+                <a class="btn btn-primary active" href="cursos"><i class="bi bi-backpack"></i> Cursos</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary " href="/unidadesCurriculares"><i class="bi bi-people me-1"></i> UCs</a>
+                <a class="btn btn-primary " href="unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/docentes"><i class="bi bi-calendar2-event me-1"></i> Docentes</a>
+                <a class="btn btn-primary" href="docentes"><i class="bi bi-person-workspace"></i> Docentes</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/alunos"><i class="bi bi-graph-up-arrow me-1"></i> Alunos</a>
+                <a class="btn btn-primary" href="alunos"><i class="bi bi-person"></i> Alunos</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/turmas"><i class="bi bi-graph-up-arrow me-1"></i> Turmas</a>
+                <a class="btn btn-primary" href="turmas"><i class="bi bi-people-fill"></i> Turmas</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/relatorios"><i class="bi bi-graph-up-arrow me-1"></i>
+                <a class="btn btn-primary" href="relatorios"><i class="bi bi-clipboard-data"></i>
                     Relatórios</a>
             </li>
         </ul>
@@ -50,6 +48,7 @@
                             <tr>
                                 <th class="text-muted">Curso</th>
                                 <th class="text-muted">Tipo</th>
+                                <th class="text-muted">Dias da semana</th>
                                 <th class="text-muted">Carga Horária</th>
                                 <th class="text-muted">Vagas</th>
                                 <th class="text-muted">Preço</th>
@@ -59,7 +58,6 @@
                         </thead>
 
                         <tbody>
-                            <!-- Exemplo de linha (vai virar foreach) -->
                             @if ($ids->isEmpty())
                             <tr>
                                 <td colspan="8" class="text-center text-muted py-4">
@@ -69,34 +67,71 @@
                             @else
 
                             @foreach ($ids as $curso)
-
                             <tr>
 
                                 <td>
                                     <div class="fw-semibold">{{ $curso->nome }}</div>
-                                    <small class="text-muted">{{$curso->horario}}</small>
+                                    <small class="text-muted">{{ $curso->horario }}</small>
                                 </td>
 
                                 <td>{{ $curso->tipo }}</td>
-                                <td>{{ $curso->cargaHoraria }} </td>
+
+                                {{-- DIAS DA SEMANA (RESUMIDO) --}}
+                                <td>
+                                    @php
+                                    $ordem = [
+                                    'segunda-feira',
+                                    'terca-feira',
+                                    'quarta-feira',
+                                    'quinta-feira',
+                                    'sexta-feira',
+                                    'sabado'
+                                    ];
+
+                                    $dias = $curso->dias ?? [];
+
+                                    usort($dias, fn($a, $b) =>
+                                    array_search($a, $ordem) <=> array_search($b, $ordem)
+                                        );
+
+                                        $indices = array_map(
+                                        fn($d) => array_search($d, $ordem),
+                                        $dias
+                                        );
+
+                                        $sequencial = count($indices) > 1 &&
+                                        max($indices) - min($indices) + 1 === count($indices);
+                                        @endphp
+
+                                        @if (!empty($dias))
+                                        @if ($sequencial)
+                                        {{ ucfirst(str_replace('-', ' ', $ordem[min($indices)])) }}
+                                        a
+                                        {{ ucfirst(str_replace('-', ' ', $ordem[max($indices)])) }}
+                                        @else
+                                        {{ implode(', ', array_map(
+                            fn($d) => ucfirst(str_replace('-', ' ', $d)),
+                            $dias
+                        )) }}
+                                        @endif
+                                        @else
+                                        —
+                                        @endif
+                                </td>
+
+                                <td>{{ $curso->cargaHoraria }}</td>
                                 <td>{{ $curso->vagas }} ({{ $curso->bolsas }} bolsas)</td>
                                 <td>R$ {{ number_format($curso->preco, 2, ',', '.') }}</td>
 
-
                                 <td>
-
                                     @if ($curso->situacao === 'ativo')
                                     <span class="badge bg-success-subtle text-success rounded-pill px-3">
-
                                         ativo
                                     </span>
-
                                     @else
                                     <span class="badge bg-danger-subtle text-danger rounded-pill px-3">
-
                                         inativo
                                     </span>
-
                                     @endif
                                 </td>
 
@@ -105,11 +140,12 @@
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                 </td>
-                            </tr>
 
+                            </tr>
                             @endforeach
                             @endif
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -134,21 +170,21 @@
                         <div class="modal-body">
                             <div class="row g-3">
                                 <!-- Nome -->
-                                <div class="col-md-6">
+                                <div class="col">
                                     <label class="form-label fw-semibold">Nome do Curso *</label>
                                     <input type="text" name="nome" class="form-control" placeholder="Ex: Técnico em Informática"
                                         required>
                                 </div>
 
                                 <!-- Sigla -->
-                                <div class="col-md-2">
+                                <div class="col">
                                     <label class="form-label fw-semibold">Sigla *</label>
                                     <input type="text" name="sigla" class="form-control text-uppercase" placeholder="TI, ADM..." maxlength="5"
                                         required>
                                 </div>
 
                                 <!-- Tipo -->
-                                <div class="col-md-4">
+                                <div class="col">
                                     <label class="form-label fw-semibold">Tipo *</label>
                                     <select name="tipo" class="form-select" required>
                                         <option value="">Selecione</option>
@@ -160,6 +196,64 @@
                             </div>
 
                             <div class="row">
+                                <div class="col">
+                                    <!-- Dias da Semana -->
+                                    <label class="form-label fw-semibold">Selecione os dias da semana</label>
+
+                                    @if ($errors->has('dias'))
+                                    <div class="alert alert-danger py-2 mb-2">
+                                        {{ $errors->first('dias') }}
+                                    </div>
+                                    @endif
+
+                                    <div class="lista-scroll">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="dias[]"
+                                                value="segunda-feira" id="segunda-feira">
+                                            <label class="form-check-label" for="segunda-feira">
+                                                Segunda-feira
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="dias[]"
+                                                value="terca-feira" id="terca-feira">
+                                            <label class="form-check-label" for="terca-feira">
+                                                Terça-feira
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="dias[]"
+                                                value="quarta-feira" id="quarta-feira">
+                                            <label class="form-check-label" for="quarta-feira">
+                                                Quarta-feira
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="dias[]"
+                                                value="quinta-feira" id="quinta-feira">
+                                            <label class="form-check-label" for="quinta-feira">
+                                                Quinta-feira
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="dias[]"
+                                                value="sexta-feira" id="sexta-feira">
+                                            <label class="form-check-label" for="sexta-feira">
+                                                Sexta-feira
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="dias[]"
+                                                value="sabado" id="sabado">
+                                            <label class="form-check-label" for="sabado">
+                                                Sábado
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <!-- Carga Horária -->
                                 <div class="col">
                                     <label class="form-label fw-semibold">Carga Horária (horas) *</label>
@@ -167,34 +261,6 @@
                                         required>
                                 </div>
 
-                                <!-- Turno -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Turno *</label>
-                                    <select name="turno" class="form-select" required>
-                                        <option value="">Selecione o turno</option>
-                                        <option value="manha">Manhã</option>
-                                        <option value="tarde">Tarde</option>
-                                        <option value="noite">Noite</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <!-- Horário -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Horário *</label>
-                                    <input type="text" name="horario" class="form-control" placeholder="08:00 - 12:00"
-                                        required>
-                                </div>
-
-                                <!-- Data Início -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Data de Início *</label>
-                                    <input type="date" name="dataInicio" class="form-control" required>
-                                </div>
-                            </div>
-
-                            <div class="row">
                                 <!-- Preço -->
                                 <div class="col">
                                     <label class="form-label fw-semibold">Preço (R$) *</label>
@@ -244,5 +310,17 @@
         </div>
         <!-- FIM DO MODAL -->
     </div>
+
+    @if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = new bootstrap.Modal(
+                document.getElementById('modalNovoCurso')
+            );
+            modal.show();
+        });
+    </script>
+    @endif
+
 
 </x-layout>

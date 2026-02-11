@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\alunoModel;
 use Illuminate\Http\Request;
+use App\Models\cursoModel;
 
 class alunoController extends Controller
 {
@@ -15,6 +16,7 @@ class alunoController extends Controller
     public function inserirAluno(Request $request)
     {
         $nomeAluno              = $request->input('nomeAluno');
+        $intencao               = $request->input('intencao');
         $ra                     = $request->input('ra');
         $cpf                    = $request->input('cpf');
         $dataNascimento         = $request->input('dataNascimento');
@@ -30,6 +32,7 @@ class alunoController extends Controller
         $model = new alunoModel();
 
         $model->nomeAluno             = $nomeAluno;
+        $model->intencao              = $intencao;
         $model->ra                    = $ra;
         $model->cpf                   = $cpf;
         $model->dataNascimento        = $dataNascimento;
@@ -48,6 +51,7 @@ class alunoController extends Controller
     public function consultarAluno()
     {
         $alunos = alunoModel::all();
+        $cursos = cursoModel::all();
 
         $totalAlunos    = alunoModel::count();
         $alunosPagantes = alunoModel::where('tipo', 'pagante')->count();
@@ -55,6 +59,7 @@ class alunoController extends Controller
 
         return view('paginas.alunos', compact(
             'alunos',
+            'cursos',
             'totalAlunos',
             'alunosPagantes',
             'alunosBolsistas'

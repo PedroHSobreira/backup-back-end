@@ -3,29 +3,31 @@
         <!-- Abas -->
         <ul class="nav nav-pills gap-2 mb-4">
             <li class="nav-item">
-                <a class="btn btn-primary" href="/dashboardAdm"><i class="bi bi-speedometer2 me-1"></i>
-                    Dashboard</a>
+                <a class="btn btn-primary" href="/dashboardAdm"><i class="bi bi-bar-chart"></i> Dashboard</a>
             </li>
+
             <li class="nav-item">
-                <a class="btn btn-primary" href="/cursos"><i class="bi bi-clipboard2-check me-1"></i>
-                    Cursos</a>
+                <a class="btn btn-primary" href="/cursos"><i class="bi bi-backpack"></i> Cursos</a>
             </li>
+
             <li class="nav-item">
-                <a class="btn btn-primary " href="/unidadesCurriculares"><i class="bi bi-people me-1"></i> UCs</a>
+                <a class="btn btn-primary active" href="/unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
             </li>
+
             <li class="nav-item">
-                <a class="btn btn-primary" href="/docentes"><i class="bi bi-calendar2-event me-1"></i> Docentes</a>
+                <a class="btn btn-primary" href="/docentes"><i class="bi bi-person-workspace"></i> Docentes</a>
             </li>
+
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/alunos"><i class="bi bi-graph-up-arrow me-1"></i>
-                    Alunos</a>
+                <a class="btn btn-primary" href="/alunos"><i class="bi bi-person"></i> Alunos</a>
             </li>
+
             <li class="nav-item">
-                <a class="btn btn-primary" href="/turmas"><i class="bi bi-graph-up-arrow me-1"></i> Turmas</a>
+                <a class="btn btn-primary" href="/turmas"><i class="bi bi-people-fill"></i> Turmas</a>
             </li>
+
             <li class="nav-item">
-                <a class="btn btn-primary" href="/relatorios"><i class="bi bi-graph-up-arrow me-1"></i>
-                    Relatórios</a>
+                <a class="btn btn-primary" href="/relatorios"> <i class="bi bi-clipboard-data"></i> Relatórios</a>
             </li>
         </ul>
 
@@ -143,7 +145,7 @@
                         <div class="row">
                             <div class="col">
                                 <label class="form-label fw-semibold">Senha</label>
-                                    <input type="password" name="senhaAluno" class="form-control" required>
+                                <input type="password" name="senhaAluno" class="form-control" required>
                             </div>
 
                             <div class="col">

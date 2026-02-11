@@ -1,30 +1,29 @@
 <x-layout titulo="Alunos - Senac">
     <div class="container-xl py-4 shadow">
 
-        <!-- Abas -->
+         <!-- Abas -->
         <ul class="nav nav-pills gap-2 mb-4">
             <li class="nav-item">
-                <a class="btn btn-primary" href="/dashboardAdm"><i
-                        class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+                <a class="btn btn-primary" href="dashboardAdm"><i class="bi bi-bar-chart"></i>
+                    Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/cursos"><i class="bi bi-clipboard2-check me-1"></i> Cursos</a>
+                <a class="btn btn-primary" href="cursos"><i class="bi bi-backpack"></i> Cursos</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/unidadesCurriculares"><i class="bi bi-people me-1"></i> UCs</a>
+                <a class="btn btn-primary " href="unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/docentes"><i class="bi bi-calendar2-event me-1"></i> Docentes</a>
+                <a class="btn btn-primary" href="docentes"><i class="bi bi-person-workspace"></i> Docentes</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/alunos"><i class="bi bi-graph-up-arrow me-1"></i>
-                    Alunos</a>
+                <a class="btn btn-primary active" href="alunos"><i class="bi bi-person"></i> Alunos</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/turmas"><i class="bi bi-graph-up-arrow me-1"></i> Turmas</a>
+                <a class="btn btn-primary" href="turmas"><i class="bi bi-people-fill"></i> Turmas</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/relatorios"><i class="bi bi-graph-up-arrow me-1"></i>
+                <a class="btn btn-primary" href="relatorios"><i class="bi bi-clipboard-data"></i>
                     Relatórios</a>
             </li>
         </ul>
@@ -91,6 +90,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-muted">Aluno</th>
+                                <th class="text-muted">Intenção do Aluno</th>
                                 <th class="text-muted">RA</th>
                                 <th class="text-muted">CPF</th>
                                 <th class="text-muted">Telefone</th>
@@ -115,6 +115,7 @@
                                     <small class="text-muted">{{ $aluno->emailAluno }}</small>
                                 </td>
 
+                                <td>{{ $aluno->intencao }}</td>
                                 <td>{{ $aluno->ra }}</td>
                                 <td>{{ $aluno->cpf }}</td>
                                 <td>{{ $aluno->telefone }}</td>
@@ -187,100 +188,114 @@
                             </div>
 
                             <div class="row">
-                                <!-- RA do Aluno -->
+                                <!-- Intenção do Aluno -->
                                 <div class="col">
-                                    <label class="form-label fw-semibold">RA (Registro Acadêmico) *</label>
-                                    <input type="text" name="ra" class="form-control" placeholder="1140279318" required>
-                                </div>
-                                <!-- CPF -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">CPF *</label>
-                                    <input type="text" name="cpf" class="form-control" placeholder="000.000.000-00"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <!-- Data de Nascimento -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Data de Nascimento *</label>
-                                    <input type="date" name="dataNascimento" class="form-control" required>
-                                </div>
-                                <!-- Data de Matrícula -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Data de Matrícula</label>
-                                    <input type="text" class="form-control" value="{{ now()->format('d/m/Y') }}"
-                                        readonly>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <!-- Endereço -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Endereço *</label>
-                                    <input type="text" name="endereco" class="form-control"
-                                        placeholder="Rua, número, bairro, cidade" required>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <!-- Telefone -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Telefone *</label>
-                                    <input type="text" name="telefone" class="form-control"
-                                        placeholder="(00) 00000-0000" required>
-                                </div>
-
-                                <!-- Email -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Email *</label>
-                                    <input type="text" name="emailAluno" class="form-control"
-                                        placeholder="email@senacsp.edu.br" required>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <!-- Carga Horária Diária -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Tipo de Matrícula *</label>
-                                    <select name="tipo" class="form-select">
-                                        <option value="pagante" selected>Pagante</option>
-                                        <option value="bolsista">Bolsista</option>
-                                    </select>
-                                </div>
-
-                                <!-- Status -->
-                                <div class="col">
-                                    <label class="form-label fw-semibold">Status</label>
-                                    <select name="status" class="form-select">
-                                        <option value="ativo" selected>Ativo</option>
-                                        <option value="inativo">Inativo</option>
+                                    <label class="form-label fw-semibold">Intenção do Aluno *</label>
+                                    <select name="intencao" class="form-select" required>
+                                        <option value="">Selecione o curso</option>
+                                        @foreach ($cursos as $curso)
+                                        <option value="{{ $curso->nome }}">
+                                            {{ $curso->nome }}
+                                        </option>
+                                        @endforeach
                                     </select>
                                 </div>
 
                                 <div class="row">
+                                    <!-- RA do Aluno -->
                                     <div class="col">
-                                        <label class="form-label fw-semibold">Senha</label>
-                                        <input type="text" name="senhaAluno" class="form-control" placeholder="Informe a senha do aluno" required>
+                                        <label class="form-label fw-semibold">RA (Registro Acadêmico) *</label>
+                                        <input type="text" name="ra" class="form-control" placeholder="1140279318" required>
+                                    </div>
+                                    <!-- CPF -->
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">CPF *</label>
+                                        <input type="text" name="cpf" class="form-control" placeholder="000.000.000-00"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Data de Nascimento -->
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Data de Nascimento *</label>
+                                        <input type="date" name="dataNascimento" class="form-control" required>
+                                    </div>
+                                    <!-- Data de Matrícula -->
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Data de Matrícula</label>
+                                        <input type="text" class="form-control" value="{{ now()->format('d/m/Y') }}"
+                                            readonly>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Endereço -->
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Endereço *</label>
+                                        <input type="text" name="endereco" class="form-control"
+                                            placeholder="Rua, número, bairro, cidade" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Telefone -->
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Telefone *</label>
+                                        <input type="text" name="telefone" class="form-control"
+                                            placeholder="(00) 00000-0000" required>
                                     </div>
 
+                                    <!-- Email -->
                                     <div class="col">
+                                        <label class="form-label fw-semibold">Email *</label>
+                                        <input type="text" name="emailAluno" class="form-control"
+                                            placeholder="email@senacsp.edu.br" required>
+                                    </div>
+                                </div>
 
+                                <div class="row">
+                                    <!-- Carga Horária Diária -->
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Tipo de Matrícula *</label>
+                                        <select name="tipo" class="form-select">
+                                            <option value="pagante" selected>Pagante</option>
+                                            <option value="bolsista">Bolsista</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="col">
+                                        <label class="form-label fw-semibold">Status</label>
+                                        <select name="status" class="form-select">
+                                            <option value="ativo" selected>Ativo</option>
+                                            <option value="inativo">Inativo</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <label class="form-label fw-semibold">Senha</label>
+                                            <input type="text" name="senhaAluno" class="form-control" placeholder="Informe a senha do aluno" required>
+                                        </div>
+
+                                        <div class="col">
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
 
-                        <!-- Footer -->
-                        <div class="modal-footer border-0 filter-tabs">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="btn btn-warning text-white px-4">
-                                Salvar
-                            </button>
-                        </div>
+                            <!-- Footer -->
+                            <div class="modal-footer border-0 filter-tabs">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                                    Cancelar
+                                </button>
+                                <button type="submit" class="btn btn-warning text-white px-4">
+                                    Salvar
+                                </button>
+                            </div>
 
                     </form>
 

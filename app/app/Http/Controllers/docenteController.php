@@ -14,6 +14,11 @@ class docenteController extends Controller
 
     public function inserirDocente(Request $request)
     {
+        $request->validate([
+            'turno' => 'required|array|min:1'
+        ], [
+            'turno.required' => 'Selecione pelo menos um turno.',
+        ]);
 
         $nomeDocente            = $request->input('nomeDocente');
         $cpf                    = $request->input('cpf');
@@ -29,7 +34,7 @@ class docenteController extends Controller
         $senhaDocente           = $request->input('senhaDocente');
         $endereco               = $request->input('endereco');
 
-
+        $turno = $request->input('turno', []);
 
         //chamando model
         $model = new docenteModel();
@@ -67,12 +72,17 @@ class docenteController extends Controller
 
     public function atualizarDocente(Request $request, $id)
     {
-        docenteModel::where('id', $id)->update(
-            $request->except(['_token', '_method'])
-        );
+        $request->validate([
+            'turno' => 'required|array|min:1'
+        ], [
+            'turno.required' => 'Selecione pelo menos um turno.',
+        ]);
+        $docente = docenteModel::findOrFail($id);
+
+        $docente->update($request->except('_token'));
 
         return redirect('/docentes');
-    } //fim do metodo atualizar
+    } //fim do metodo atualiziar
 
     public function excluirDocente($id)
     {

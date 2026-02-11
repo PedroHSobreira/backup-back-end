@@ -1,30 +1,30 @@
+
 <x-layout titulo="Docentes - Senac">
 
     <div class="container-xl py-4 shadow">
         <!-- Abas -->
         <ul class="nav nav-pills gap-2 mb-4">
             <li class="nav-item">
-                <a class="btn btn-primary" href="/dashboardAdm"><i class="bi bi-speedometer2 me-1"></i>
+                <a class="btn btn-primary" href="dashboardAdm"><i class="bi bi-bar-chart"></i>
                     Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/cursos"><i class="bi bi-clipboard2-check me-1"></i> Cursos</a>
+                <a class="btn btn-primary" href="cursos"><i class="bi bi-backpack"></i> Cursos</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/unidadesCurriculares"><i class="bi bi-people me-1"></i> UCs</a>
+                <a class="btn btn-primary " href="unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/docentes"><i class="bi bi-calendar2-event me-1"></i>
-                    Docentes</a>
+                <a class="btn btn-primary active" href="docentes"><i class="bi bi-person-workspace"></i> Docentes</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/alunos"><i class="bi bi-graph-up-arrow me-1"></i> Alunos</a>
+                <a class="btn btn-primary" href="alunos"><i class="bi bi-person"></i> Alunos</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/turmas"><i class="bi bi-graph-up-arrow me-1"></i> Turmas</a>
+                <a class="btn btn-primary" href="turmas"><i class="bi bi-people-fill"></i> Turmas</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary" href="/relatorios"><i class="bi bi-graph-up-arrow me-1"></i>
+                <a class="btn btn-primary" href="relatorios"><i class="bi bi-clipboard-data"></i>
                     Relatórios</a>
             </li>
         </ul>
@@ -72,7 +72,15 @@
                             <li><strong>Telefone:</strong> {{ $docente->telefone }}</li>
                             <li><strong>Formação:</strong> {{ $docente->formacao }}</li>
                             <li><strong>Especialização:</strong> {{ $docente->especializacao }}</li>
-                            <li><strong>Turno:</strong> {{ $docente->turno }}</li>
+                            <li>
+                                <strong>Turno:</strong>
+                                @if ($docente->turno)
+                                {{ implode(', ', array_map('ucfirst', $docente->turno)) }}
+                                @else
+                                —
+                                @endif
+                            </li>
+
                             <li><strong>Carga Horária:</strong> {{ $docente->cargaHoraria }}</li>
                         </ul>
 
@@ -119,7 +127,8 @@
                     </div>
 
                     <!-- Form -->
-                    <form action="/inserirDocente" method="POST">
+                    <form action="/inserirDocente" method="POST" id="form-docente">
+
                         @csrf
 
                         <div class="modal-body">
@@ -203,14 +212,8 @@
 
                                 <!-- Turno de Trabalho -->
                                 <div class="col">
-                                    <label class="form-label fw-semibold">Turno *</label>
-                                    <select name="turno" class="form-select" required>
-                                        <option value="">Selecione o turno</option>
-                                        <option value="manha">Manhã</option>
-                                        <option value="tarde">Tarde</option>
-                                        <option value="noite">Noite</option>
-                                        <option value="integral">Integral</option>
-                                    </select>
+                                    <label class="form-label fw-semibold">Senha</label>
+                                    <input type="text" name="senhaDocente" class="form-control" placeholder="Informe a senha do docente" required>
                                 </div>
                             </div>
 
@@ -233,8 +236,42 @@
 
                                 <div class="row">
                                     <div class="col">
-                                        <label class="form-label fw-semibold">Senha</label>
-                                        <input type="text" name="senhaDocente" class="form-control" placeholder="Informe a senha do docente" required>
+                                        <!-- Turno de Trabalho -->
+                                        <label class="form-label fw-semibold">Turnos</label>
+
+                                        @if ($errors->has('turnos'))
+                                        <div class="text-danger small mb-2">
+                                            {{ $errors->first('turnos') }}
+                                        </div>
+                                        @endif
+
+
+                                        <div class="lista-scroll">
+                                            <div class="form-check">
+                                                <input class="form-check-input turno-checkbox"
+                                                    type="checkbox" name="turno[]"
+                                                    value="manha" id="manha">
+                                                <label class="form-check-label" for="manha">
+                                                    Manhã
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input turno-checkbox"
+                                                    type="checkbox" name="turno[]"
+                                                    value="tarde" id="tarde">
+                                                <label class="form-check-label" for="tarde">
+                                                    Tarde
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input turno-checkbox"
+                                                    type="checkbox" name="turno[]"
+                                                    value="noite" id="noite">
+                                                <label class="form-check-label" for="noite">
+                                                    Noite
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="col">
@@ -261,5 +298,6 @@
         </div>
         <!-- FIM DO MODAL -->
     </div>
+
 
 </x-layout>
