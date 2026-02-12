@@ -73,7 +73,7 @@ class cursoController extends Controller
             'dias.required' => 'Selecione pelo menos um dia da semana.',
             'dias.min' => 'Selecione pelo menos um dia da semana.'
         ]);
-        
+
         $dados = $request->except(['_token', '_method']);
 
         $dados['dias'] = $request->input('dias', []);
@@ -89,4 +89,5 @@ class cursoController extends Controller
         cursoModel::where('id', $id)->delete();
         return redirect('/cursos');
     } //fim do metodo excluir
+
 }

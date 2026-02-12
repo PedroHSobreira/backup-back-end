@@ -1,10 +1,9 @@
 <x-layout titulo="Unidade Curricular - Senac">
     <div class="container-xl py-4 shadow">
-         <!-- Abas -->
+        <!-- Abas -->
         <ul class="nav nav-pills gap-2 mb-4">
             <li class="nav-item">
-                <a class="btn btn-primary" href="dashboardAdm"><i class="bi bi-bar-chart"></i>
-                    Dashboard</a>
+                <a class="btn btn-primary" href="dashboardAdm"><i class="bi bi-bar-chart"></i></i> Dashboard</a>
             </li>
             <li class="nav-item">
                 <a class="btn btn-primary" href="cursos"><i class="bi bi-backpack"></i> Cursos</a>
@@ -22,11 +21,18 @@
                 <a class="btn btn-primary" href="turmas"><i class="bi bi-people-fill"></i> Turmas</a>
             </li>
             <li class="nav-item">
+                <a class="btn btn-primary" href="aulas"><i class="bi bi-file-bar-graph"></i>
+                    Aulas</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-primary" href="indicadores"><i class="bi bi-card-list"></i>
+                    Indicadores</a>
+            </li>
+            <li class="nav-item">
                 <a class="btn btn-primary" href="relatorios"><i class="bi bi-clipboard-data"></i>
                     Relatórios</a>
             </li>
         </ul>
-
         <!-- Conteudo Principal -->
 
         <section class="container-fluid">

@@ -7,15 +7,15 @@
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/cursos"><i class="bi bi-backpack"></i> Cursos</a>
+                <a class="btn btn-primary " href="/cursos"><i class="bi bi-backpack"></i> Cursos</a>
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
+                <a class="btn btn-primary" href="/unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/docentes"><i class="bi bi-person-workspace"></i> Docentes</a>
+                <a class="btn btn-primary active" href="/docentes"><i class="bi bi-person-workspace"></i> Docentes</a>
             </li>
 
             <li class="nav-item">
@@ -27,9 +27,17 @@
             </li>
 
             <li class="nav-item">
+                <a class="btn btn-primary" href="/aulas"><i class="bi bi-person"></i> Alunos</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="btn btn-primary" href="/indicadores"><i class="bi bi-people-fill"></i> Turmas</a>
+            </li>
+
+            <li class="nav-item">
                 <a class="btn btn-primary" href="/relatorios"> <i class="bi bi-clipboard-data"></i> Relatórios</a>
             </li>
-        </ul>>
+        </ul>
 
         <!-- Conteudo Principal -->
 

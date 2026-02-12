@@ -1,10 +1,9 @@
-<x-layout titulo="Turmas - Senac">   
-<div class="container-xl py-4 shadow">
-         <!-- Abas -->
+<x-layout titulo="Turmas - Senac">
+    <div class="container-xl py-4 shadow">
+        <!-- Abas -->
         <ul class="nav nav-pills gap-2 mb-4">
             <li class="nav-item">
-                <a class="btn btn-primary " href="dashboardAdm"><i class="bi bi-bar-chart"></i>
-                    Dashboard</a>
+                <a class="btn btn-primary" href="dashboardAdm"><i class="bi bi-bar-chart"></i></i> Dashboard</a>
             </li>
             <li class="nav-item">
                 <a class="btn btn-primary" href="cursos"><i class="bi bi-backpack"></i> Cursos</a>
@@ -20,6 +19,14 @@
             </li>
             <li class="nav-item">
                 <a class="btn btn-primary active" href="turmas"><i class="bi bi-people-fill"></i> Turmas</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-primary" href="aulas"><i class="bi bi-file-bar-graph"></i>
+                    Aulas</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-primary" href="indicadores"><i class="bi bi-card-list"></i>
+                    Indicadores</a>
             </li>
             <li class="nav-item">
                 <a class="btn btn-primary" href="relatorios"><i class="bi bi-clipboard-data"></i>
@@ -84,11 +91,11 @@
                                 <small class="text-muted">Docente:</small>
                                 <div class="fw-semibold">
                                     @if ($turma->docentes->isEmpty())
-                                        <div class="text-muted">Não definido</div>
+                                    <div class="text-muted">Não definido</div>
                                     @else
-                                        @foreach ($turma->docentes as $docente)
-                                            <div>{{ $docente->nomeDocente }}</div>
-                                        @endforeach
+                                    @foreach ($turma->docentes as $docente)
+                                    <div>{{ $docente->nomeDocente }}</div>
+                                    @endforeach
                                     @endif
                                 </div>
                             </div>
@@ -108,17 +115,27 @@
                             </div>
 
                             <div class="mb-3">
-                                <small class="text-muted">Término:</small>
+                                <small class="text-muted">Previsão Término:</small>
                                 <span class="fw-semibold">
-                                     {{ \Carbon\Carbon::parse($turma->dataTermino)->format('d/m/Y') }}                            
+                                    @if($turma->dataFim)
+                                    {{ \Carbon\Carbon::parse($turma->dataFim)->format('d/m/Y') }}
+                                    @else
+                                    —
+                                    @endif
+
                                 </span>
                             </div>
 
 
                             <div class="mt-auto d-flex gap-2">
-                                <a href="" class="btn btn-outline-primary">
+                                <button class="btn btn-outline-primary btn-sm btn-ver-turma" data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalhesTurma" data-nome="{{ $turma->nome }}"
+                                    data-curso="{{ $turma->curso->nome }}" data-status="{{ $turma->status }}"
+                                    data-docente="{{ $turma->nomeDocente }}"
+                                    data-periodo="{{ $turma->dataInicio }} até {{ $turma->dataFim }}"
+                                    data-alunos='@json($turma->alunos)'>
                                     <i class="bi bi-eye"></i> Ver
-                                </a>
+                                </button>
 
                                 <a href="/editarTurmas/{{$turma->id}}" class="btn btn-outline-dark">
                                     <i class="bi bi-pencil"></i>
@@ -243,11 +260,22 @@
                             </div>
 
                             <div class="row">
-                                <!-- Data de Nascimento -->
                                 <div class="col">
-                                    <label class="form-label fw-semibold">Data de Inicio *</label>
+                                    <label class="form-label fw-semibold">Data de Início *</label>
                                     <input type="date" name="dataInicio" class="form-control" required>
-                                </div>                              
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label class="form-label fw-semibold">Horas por dia *</label>
+                                    <input type="number"
+                                        name="horasPorDia"
+                                        class="form-control"
+                                        min="1"
+                                        max="12"
+                                        required>
+                                </div>
                             </div>
 
                             <div class="row">
@@ -282,11 +310,66 @@
                             </button>
                         </div>
 
+
                     </form>
 
                 </div>
             </div>
         </div>
         <!-- FIM DO MODAL -->
+
+        <!-- MODAL VISUALIZAR TURMA -->
+        <div class="modal fade" id="modalDetalhesTurma" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content rounded-4">
+
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title" id="modalTitulo"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Curso</p>
+                                <strong id="modalCurso"></strong>
+                            </div>
+
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Status</p>
+                                <strong id="modalStatus"></strong>
+                            </div>
+
+                            <div class="col-md-6 mt-3">
+                                <p class="text-muted mb-1">Docente Responsável</p>
+                                <strong id="modalDocente"></strong>
+                            </div>
+
+                            <div class="col-md-6 mt-3">
+                                <p class="text-muted mb-1">Período</p>
+                                <strong id="modalPeriodo"></strong>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-semibold mb-3">
+                            Alunos Matriculados (<span id="totalAlunos"></span>)
+                        </h6>
+
+                        <div id="listaAlunos" class="d-flex flex-column gap-3"></div>
+
+                    </div>
+
+                    <div class="modal-footer border-0">
+                        <button class="btn btn-dark px-4" data-bs-dismiss="modal">
+                            Fechar
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- FIM DO MODAL -->
     </div>
+
 </x-layout>

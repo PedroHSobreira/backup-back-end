@@ -7,11 +7,11 @@
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/cursos"><i class="bi bi-backpack"></i> Cursos</a>
+                <a class="btn btn-primary " href="/cursos"><i class="bi bi-backpack"></i> Cursos</a>
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
+                <a class="btn btn-primary" href="/unidadesCurriculares"><i class="bi bi-book"></i> UCs</a>
             </li>
 
             <li class="nav-item">
@@ -23,7 +23,15 @@
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/turmas"><i class="bi bi-people-fill"></i> Turmas</a>
+                <a class="btn btn-primary active" href="/turmas"><i class="bi bi-people-fill"></i> Turmas</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="btn btn-primary" href="/aulas"><i class="bi bi-person"></i> Alunos</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="btn btn-primary" href="/indicadores"><i class="bi bi-people-fill"></i> Turmas</a>
             </li>
 
             <li class="nav-item">
@@ -128,9 +136,23 @@
                         <!-- Data de Nascimento -->
                         <div class="col">
                             <label class="form-label fw-semibold">Data de Término *</label>
-                            <input type="date" name="dataFim" class="form-control" value="{{$dado->dataFim}}" required>
+                            <input type="date" name="dataFim" class="form-control" value="{{$dado->dataFim}}" readonly>
                         </div>
                     </div>
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label class="form-label fw-semibold">Horas por dia *</label>
+                            <input type="number"
+                                name="horasPorDia"
+                                class="form-control"
+                                min="1"
+                                max="12"
+                                value="{{ $dado->horasPorDia }}"
+                                required>
+                        </div>
+                    </div>
+
 
                     <div class="row">
                         <!-- Status -->

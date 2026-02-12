@@ -118,3 +118,46 @@ document.getElementById('form-docente').addEventListener('submit', function (e) 
     }
 });
 
+document.querySelectorAll('.btn-ver-turma').forEach(btn => {
+    btn.addEventListener('click', function () {
+
+        document.getElementById('modalTitulo').innerText =
+            'Detalhes da Turma ' + this.dataset.nome;
+
+        document.getElementById('modalCurso').innerText =
+            this.dataset.curso;
+
+        document.getElementById('modalStatus').innerText =
+            this.dataset.status;
+
+        document.getElementById('modalDocente').innerText =
+            this.dataset.docente;
+
+        document.getElementById('modalPeriodo').innerText =
+            this.dataset.periodo;
+
+        const alunos = JSON.parse(this.dataset.alunos);
+        const lista = document.getElementById('listaAlunos');
+        lista.innerHTML = '';
+
+        document.getElementById('totalAlunos').innerText = alunos.length;
+
+        alunos.forEach(aluno => {
+            lista.innerHTML += `
+                <div class="d-flex align-items-center bg-light rounded-3 p-3">
+                    <div class="rounded-circle bg-warning text-white fw-bold
+                        d-flex align-items-center justify-content-center me-3"
+                        style="width: 40px; height: 40px;">
+                        ${aluno.nome.charAt(0)}
+                    </div>
+                    <div>
+                        <strong>${aluno.nome}</strong><br>
+                        <small class="text-muted">RA: ${aluno.ra}</small>
+                    </div>
+                </div>
+            `;
+        });
+    });
+});
+
+

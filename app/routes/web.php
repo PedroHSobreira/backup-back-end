@@ -55,6 +55,14 @@ Route::post('/atualizarTurmas/{id}', [\App\Http\Controllers\turmaController::cla
 Route::get('/excluirTurma/{id}', [\App\Http\Controllers\turmaController::class, 'excluirTurma']);
 Route::get('/pergunta/{data}', [\App\Http\Controllers\turmaController::class, 'retornarDataFinal']);
 
+//aulas
+Route::get('/aulas', [\App\Http\Controllers\aulaController::class, 'consultarAula']);
+Route::post('/inserirAula', [\App\Http\Controllers\aulaController::class, 'inserirAula']);
+Route::get('/editarAulas/{id}', [\App\Http\Controllers\aulaController::class, 'editarAulas']);
+Route::post('/atualizarAula/{id}', [\App\Http\Controllers\aulaController::class, 'atualizarAula']);
+Route::get('/excluirAula/{id}', [\App\Http\Controllers\aulaController::class, 'excluirAula']);
+
+
 //relatorio
 Route::get('/relatorios', [\App\Http\Controllers\relatorioController::class, 'consultarRelatorio']);
 

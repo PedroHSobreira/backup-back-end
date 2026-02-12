@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('dataFim');
             $table->enum('turno', ['M', 'T', 'N'])->default('M');
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
+            $table->integer('horasPorDia');
             $table->timestamps();
         });
     }
