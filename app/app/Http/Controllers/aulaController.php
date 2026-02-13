@@ -20,7 +20,9 @@ class aulaController extends Controller
     {
         $aulas = aulaModel::with(['uc', 'curso', 'turmas', 'docenteResponsavel'])
             ->orderBy('dia', 'asc')
-            ->get();
+            ->get()
+            ->groupBy(fn($aula) => $aula->uc->nome ?? 'Sem UC');
+
 
         $cursos   = cursoModel::all();
         $turmas   = turmaModel::all();

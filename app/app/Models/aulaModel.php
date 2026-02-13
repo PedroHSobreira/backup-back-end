@@ -16,7 +16,7 @@ class aulaModel extends Model
         'uc_id',
         'dia',
         'status',
-        'docente_responsavel_id', 
+        'docente_responsavel_id',
     ];
 
     // RELACIONAMENTOS
@@ -73,6 +73,17 @@ class aulaModel extends Model
 
         if ($this->dia > $hoje) return 'prevista';
         if ($this->dia == $hoje) return 'andamento';
-        return 'concluida';
+        return 'pendente';
+    }
+
+    public function alunos()
+    {
+        return $this->belongsToMany(
+            alunoModel::class,
+            'aula_aluno',
+            'aula_id',
+            'aluno_id'
+        )->withPivot('presenca')
+            ->withTimestamps();
     }
 }

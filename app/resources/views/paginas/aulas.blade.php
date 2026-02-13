@@ -1,5 +1,6 @@
 <x-layout titulo="Aulas - Senac">
     <div class="container-xl py-4 shadow">
+
         <!-- Abas -->
         <ul class="nav nav-pills gap-2 mb-4">
             <li class="nav-item">
@@ -32,16 +33,18 @@
         </ul>
 
         <section class="container-fluid">
+
             <!-- Header -->
             <div class="mb-4">
                 <h2 class="fw-bold mb-0">Aulas</h2>
                 <small class="text-muted">Visualização automática das aulas geradas ao iniciar uma UC</small>
             </div>
 
-            <!-- Tabela de Aulas -->
+            <!-- Card -->
             <div class="card border-0 shadow rounded-4">
                 <div class="card-body p-0">
                     <div class="table-responsive">
+
                         <table class="table align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
@@ -53,9 +56,21 @@
                                     <th>Turmas</th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                @forelse ($aulas as $aula)
+
+                                @forelse ($aulas as $ucNome => $grupo)
+
+                                <!-- TITULO DA UC -->
+                                <tr class="table-primary">
+                                    <td colspan="6" class="fw-bold ps-4">
+                                        {{ $ucNome }}
+                                    </td>
+                                </tr>
+
+                                @foreach ($grupo as $aula)
                                 <tr>
+
                                     <!-- DATA -->
                                     <td>
                                         <span class="badge bg-light text-dark border">
@@ -64,7 +79,9 @@
                                     </td>
 
                                     <!-- UC -->
-                                    <td class="fw-semibold">{{ $aula->uc->nome ?? '-' }}</td>
+                                    <td class="fw-semibold">
+                                        {{ $aula->uc->nome ?? '-' }}
+                                    </td>
 
                                     <!-- CURSO -->
                                     <td>
@@ -73,7 +90,7 @@
                                         </span>
                                     </td>
 
-                                    <!-- DOCENTE RESPONSÁVEL -->
+                                    <!-- DOCENTE -->
                                     <td>
                                         <span class="badge bg-light text-dark border">
                                             {{ $aula->docenteResponsavel->nomeDocente }}
@@ -83,17 +100,22 @@
                                     <!-- STATUS -->
                                     <td>
                                         @switch($aula->status_calculado)
+
                                         @case('prevista')
                                         <span class="badge bg-secondary-subtle text-secondary px-3">Prevista</span>
                                         @break
+
                                         @case('andamento')
                                         <span class="badge bg-warning-subtle text-warning px-3">Em andamento</span>
                                         @break
-                                        @case('concluida')
-                                        <span class="badge bg-success-subtle text-success px-3">Concluída</span>
+
+                                        @case('pendente')
+                                        <span class="badge bg-warning-subtle text-warning px-3">Pendente</span>
                                         @break
+
                                         @default
                                         <span class="badge bg-light text-dark">—</span>
+
                                         @endswitch
                                     </td>
 
@@ -105,7 +127,10 @@
                                         </span>
                                         @endforeach
                                     </td>
+
                                 </tr>
+                                @endforeach
+
                                 @empty
                                 <tr>
                                     <td colspan="6" class="text-center py-4 text-muted">
@@ -113,8 +138,10 @@
                                     </td>
                                 </tr>
                                 @endforelse
+
                             </tbody>
                         </table>
+
                     </div>
                 </div>
             </div>

@@ -71,7 +71,12 @@ Route::get('/editarIndicador/{id}', [\App\Http\Controllers\IndicadorController::
 Route::post('/atualizarIndicador/{id}', [\App\Http\Controllers\IndicadorController::class, 'atualizarIndicador']);
 Route::get('/excluirIndicador/{id}', [\App\Http\Controllers\IndicadorController::class, 'excluirIndicador']);
 
-
-
 //relatorio
 Route::get('/relatorios', [\App\Http\Controllers\relatorioController::class, 'consultarRelatorio']);
+
+
+
+// PAINEL DOCENTE
+Route::get('/telaInicial', [\App\Http\Controllers\areaDocenteController::class, 'consultarPainelDocente']);
+Route::get('/notas', [\App\Http\Controllers\areaDocenteController::class, 'consultarNotas']);
+Route::get('/presenca/{id}', [\App\Http\Controllers\AreaDocenteController::class, 'presencaDocente'])->name('presenca');
