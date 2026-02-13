@@ -32,48 +32,30 @@
         </ul>
 
         <section class="container-fluid">
-
             <!-- Header -->
             <div class="mb-4">
                 <h2 class="fw-bold mb-0">Aulas</h2>
                 <small class="text-muted">Visualização automática das aulas geradas ao iniciar uma UC</small>
             </div>
 
-            <!-- Card tabela -->
+            <!-- Tabela de Aulas -->
             <div class="card border-0 shadow rounded-4">
-
                 <div class="card-body p-0">
-
                     <div class="table-responsive">
                         <table class="table align-middle mb-0">
-
                             <thead class="table-light">
                                 <tr>
                                     <th>Data</th>
                                     <th>UC</th>
                                     <th>Curso</th>
-                                    <th>Docentes</th>
+                                    <th>Docente Responsável</th>
                                     <th>Status</th>
                                     <th>Turmas</th>
-                                    <th class="text-center">Ações</th>
                                 </tr>
                             </thead>
-
                             <tbody>
-
-                                @forelse ($ucs as $uc)
-
-                                <!-- Cabeçalho da UC -->
-                                <tr class="table-secondary">
-                                    <td colspan="7" class="fw-semibold">
-                                        📘 {{ $uc->nome }}
-                                    </td>
-                                </tr>
-
-                                @forelse ($uc->aulas as $aula)
-
+                                @forelse ($aulas as $aula)
                                 <tr>
-
                                     <!-- DATA -->
                                     <td>
                                         <span class="badge bg-light text-dark border">
@@ -82,111 +64,61 @@
                                     </td>
 
                                     <!-- UC -->
-                                    <td class="fw-semibold">
-                                        {{ $uc->nome }}
-                                    </td>
+                                    <td class="fw-semibold">{{ $aula->uc->nome ?? '-' }}</td>
 
                                     <!-- CURSO -->
                                     <td>
-                                        <span class="badge rounded-pill px-3"
-                                            style="background:#e7f0ff;color:#1d4ed8;">
+                                        <span class="badge rounded-pill px-3" style="background:#e7f0ff;color:#1d4ed8;">
                                             {{ $aula->curso->nome ?? '-' }}
                                         </span>
                                     </td>
 
-                                    <!-- DOCENTES -->
+                                    <!-- DOCENTE RESPONSÁVEL -->
                                     <td>
-                                        @forelse($aula->docentes as $docente)
-                                        <span class="badge bg-light text-dark border me-1">
-                                            {{ $docente->nomeDocente }}
+                                        <span class="badge bg-light text-dark border">
+                                            {{ $aula->docenteResponsavel->nomeDocente }}
                                         </span>
-                                        @empty
-                                        <span class="text-muted small">Sem docente</span>
-                                        @endforelse
                                     </td>
 
                                     <!-- STATUS -->
                                     <td>
-
                                         @switch($aula->status_calculado)
-
                                         @case('prevista')
-                                        <span class="badge bg-secondary-subtle text-secondary px-3">
-                                            Prevista
-                                        </span>
+                                        <span class="badge bg-secondary-subtle text-secondary px-3">Prevista</span>
                                         @break
-
                                         @case('andamento')
-                                        <span class="badge bg-warning-subtle text-warning px-3">
-                                            Em andamento
-                                        </span>
+                                        <span class="badge bg-warning-subtle text-warning px-3">Em andamento</span>
                                         @break
-
                                         @case('concluida')
-                                        <span class="badge bg-success-subtle text-success px-3">
-                                            Concluída
-                                        </span>
+                                        <span class="badge bg-success-subtle text-success px-3">Concluída</span>
                                         @break
-
                                         @default
-                                        <span class="badge bg-light text-dark">
-                                            —
-                                        </span>
+                                        <span class="badge bg-light text-dark">—</span>
                                         @endswitch
-
                                     </td>
 
                                     <!-- TURMAS -->
                                     <td>
                                         @foreach($aula->turmas as $turma)
-                                        <span class="badge rounded-pill px-3 me-1"
-                                            style="background:#f3e8ff;color:#7c3aed;">
+                                        <span class="badge rounded-pill px-3 me-1" style="background:#f3e8ff;color:#7c3aed;">
                                             {{ $turma->codigoTurma }}
                                         </span>
                                         @endforeach
                                     </td>
-
-                                    <!-- AÇÕES -->
-                                    <td class="text-center">
-                                        <a href="/editarAulas/{{ $aula->id }}"
-                                            class="btn btn-sm btn-outline-dark">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                    </td>
-
                                 </tr>
-
                                 @empty
-
                                 <tr>
-                                    <td colspan="7" class="text-center py-4 text-muted">
-                                        UC ainda não iniciada
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        Nenhuma aula cadastrada
                                     </td>
                                 </tr>
-
                                 @endforelse
-
-                                @empty
-
-                                <tr>
-                                    <td colspan="7" class="text-center py-5 text-muted">
-                                        Nenhuma UC cadastrada
-                                    </td>
-                                </tr>
-
-                                @endforelse
-
                             </tbody>
-
                         </table>
                     </div>
-
                 </div>
             </div>
 
         </section>
-
-
-
     </div>
 </x-layout>

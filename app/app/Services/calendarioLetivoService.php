@@ -12,9 +12,11 @@ class CalendarioLetivoService
         int $cargaHorariaTotal,
         int $horasPorDia
     ) {
-
         $data = Carbon::parse($dataInicio);
         $horasAcumuladas = 0;
+
+        // Normaliza diasSemana para minúsculas
+        $diasSemana = array_map(fn($d) => strtolower($d), $diasSemana);
 
         while ($horasAcumuladas < $cargaHorariaTotal) {
 
@@ -23,10 +25,12 @@ class CalendarioLetivoService
 
             $diaSemana = strtolower($data->locale('pt_BR')->dayName);
 
+            // Verifica se o dia é válido
             if (
                 in_array($diaSemana, $diasSemana) &&
-                !in_array($data->toDateString(), $feriados) &&
-                !$this->isUltimaSexta($data)
+                !$data->isSunday() &&
+                !$this->isUltimaSexta($data) &&
+                !in_array($data->toDateString(), $feriados)
             ) {
                 $horasAcumuladas += $horasPorDia;
             }
@@ -41,11 +45,10 @@ class CalendarioLetivoService
 
     private function isUltimaSexta(Carbon $data)
     {
-        return $data->isFriday() &&
-            $data->copy()->addWeek()->month != $data->month;
+        return $data->isFriday() && $data->copy()->addWeek()->month != $data->month;
     }
 
-    private function getFeriados($ano)
+    private function getFeriados(int $ano)
     {
         $fixos = [
             "$ano-01-01",
@@ -60,7 +63,6 @@ class CalendarioLetivoService
             "$ano-08-20", // SBC
         ];
 
-        // ✅ PASCOA CORRETA
         $pascoa = Carbon::createFromTimestamp(easter_date($ano));
 
         $moveis = [
@@ -74,22 +76,23 @@ class CalendarioLetivoService
 
     private function aplicarEmendas(array $feriados)
     {
-        $extras = [];
+        $emendas = [];
 
         foreach ($feriados as $dataStr) {
-
             $data = Carbon::parse($dataStr);
 
+            // Se feriado cair terça, adiciona segunda como feriado emenda
             if ($data->isTuesday()) {
-                $extras[] = $data->copy()->subDay()->toDateString();
+                $emendas[] = $data->copy()->subDay()->toDateString();
             }
 
+            // Se feriado cair quinta, adiciona sexta como feriado emenda
             if ($data->isThursday()) {
-                $extras[] = $data->copy()->addDay()->toDateString();
+                $emendas[] = $data->copy()->addDay()->toDateString();
             }
         }
 
-        return array_unique(array_merge($feriados, $extras));
+        return array_unique(array_merge($feriados, $emendas));
     }
 
     public function listarDatasLetivas(
@@ -99,19 +102,20 @@ class CalendarioLetivoService
     ) {
         $data = Carbon::parse($dataInicio);
         $fim  = Carbon::parse($dataFim);
-
         $datas = [];
 
-        while ($data->lte($fim)) {
+        $diasSemana = array_map(fn($d) => strtolower($d), $diasSemana);
 
+        while ($data->lte($fim)) {
             $ano = $data->year;
             $feriados = $this->getFeriados($ano);
             $diaSemana = strtolower($data->locale('pt_BR')->dayName);
 
             if (
                 in_array($diaSemana, $diasSemana) &&
-                !in_array($data->toDateString(), $feriados) &&
-                !$this->isUltimaSexta($data)
+                !$data->isSunday() &&
+                !$this->isUltimaSexta($data) &&
+                !in_array($data->toDateString(), $feriados)
             ) {
                 $datas[] = $data->toDateString();
             }

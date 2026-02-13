@@ -45,8 +45,13 @@ class turmaModel extends Model
         );
     }
 
-    public function ucs()
+    public function ucsDiretas()
     {
-        return $this->hasMany(UcTurmaModel::class, 'turma_id');
+        return $this->belongsToMany(
+            ucModel::class,
+            'uc_turma',
+            'turma_id',
+            'uc_id'
+        )->withPivot(['data_inicio', 'data_fim', 'status']);
     }
 }

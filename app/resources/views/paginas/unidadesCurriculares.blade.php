@@ -33,7 +33,6 @@
                     Relatórios</a>
             </li>
         </ul>
-        <!-- Conteudo Principal -->
 
         <!-- Conteudo Principal -->
 
@@ -51,13 +50,6 @@
                 </a>
             </div>
 
-            @php
-            $mapaCursos = [];
-            foreach ($cursos as $curso) {
-            $mapaCursos[$curso->codigo] = $curso->nome;
-            }
-            @endphp
-
             <!-- Cards -->
             <div class="row g-4">
                 @if ($ucs->isEmpty())
@@ -66,6 +58,10 @@
                 </div>
                 @else
                 @foreach ($ucs as $uc)
+                @php
+                $ucIniciada = $uc->aulas->count() > 0;
+                @endphp
+
                 <div class="col-md-6 col-lg-4 float-start">
                     <div class="card uc-card p-4 h-100 hover-shadow">
 
@@ -88,17 +84,17 @@
                         </p>
 
                         <ul class="list-unstyled small mb-3">
-                            <li>
-                                <strong>Curso:</strong>
-                                {{ $uc->curso->nome ?? 'Curso não encontrado' }}
-                            </li>
+                            <li><strong>Curso:</strong> {{ $uc->curso->nome ?? 'Curso não encontrado' }}</li>
                             <li><strong>Carga Horária:</strong> {{ $uc->cargaHoraria }}h</li>
                             <li><strong>Presença Mínima:</strong> {{ $uc->presencaMinima }}%</li>
+                            @if($uc->docentes->count())
+                            <li><strong>Docentes:</strong>
+                                {{ $uc->docentes->pluck('nomeDocente')->join(', ') }}
+                            </li>
+                            @endif
                         </ul>
 
-                        <p class="small text-muted">
-                            {{ $uc->descricao }}
-                        </p>
+                        <p class="small text-muted">{{ $uc->descricao }}</p>
 
                         {{-- ================= LISTA DE AULAS ================= --}}
                         @if($uc->aulas->count())
@@ -107,11 +103,8 @@
                         <ul class="small ps-3">
                             @foreach($uc->aulas as $aula)
                             <li>
-                                {{ \Carbon\Carbon::parse($aula->dia)->format('d/m/Y') }}
-                                —
-                                <span class="text-muted">
-                                    {{ ucfirst($aula->status) }}
-                                </span>
+                                {{ \Carbon\Carbon::parse($aula->dia)->format('d/m/Y') }} —
+                                <span class="text-muted">{{ ucfirst($aula->status) }}</span>
                             </li>
                             @endforeach
                         </ul>
@@ -119,19 +112,23 @@
                         {{-- ==================================================== --}}
 
                         <div class="mt-auto d-flex gap-2">
+                            @if($ucIniciada)
+                            <button class="btn btn-secondary btn-sm w-100" disabled>UC Iniciada</button>
+                            @else
                             <button type="button"
                                 class="btn btn-success btn-sm w-100"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modalIniciarUc-{{ $uc->id }}">
                                 Iniciar UC
                             </button>
+                            @endif
 
                             <a href="/editarUnidadesCurriculares/{{$uc->id}}" class="btn btn-outline-dark btn-sm w-100">
                                 <i class="bi bi-pencil me-1"></i> Editar
                             </a>
                         </div>
                     </div>
-                </div> 
+                </div>
 
                 {{-- ================= MODAL INICIAR UC ================= --}}
                 <div class="modal fade" id="modalIniciarUc-{{ $uc->id }}" tabindex="-1">
@@ -145,6 +142,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
+                                    <!-- Seleção de turma -->
                                     <label>Turma</label>
                                     <select name="turma_id" class="form-select" required>
                                         @foreach($turmas as $turma)
@@ -152,8 +150,18 @@
                                         @endforeach
                                     </select>
 
+                                    <!-- Data início -->
                                     <label class="mt-3">Data início</label>
                                     <input type="date" name="data_inicio" class="form-control" required>
+
+                                    <!-- Docente responsável -->
+                                    <label class="mt-3">Docente responsável</label>
+                                    <select name="docente_responsavel" class="form-select" required>
+                                        <option value="">Selecione o responsável</option>
+                                        @foreach($uc->docentes as $docente)
+                                        <option value="{{ $docente->id }}">{{ $docente->nomeDocente }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="modal-footer">
                                     <button class="btn btn-success">Iniciar</button>
@@ -168,7 +176,6 @@
                 @endif
             </div>
         </section>
-
 
         <!-- Modal Novo UC -->
         <div class="modal fade" id="modalNovaUc" tabindex="-1" aria-hidden="true">
@@ -224,6 +231,29 @@
                                         @endforeach
                                         @endif
                                     </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Selecionar Docentes -->
+                                <div class="col">
+                                    <label class="form-label fw-semibold">Docentes da UC</label>
+                                    <div class="lista-scroll mb-2">
+                                        @foreach($docentes as $docente)
+                                        <div class="form-check">
+                                            <input
+                                                class="form-check-input uc-docente-checkbox"
+                                                type="checkbox"
+                                                name="docentes[]"
+                                                value="{{ $docente->id }}"
+                                                id="docente{{ $docente->id }}"
+                                                @if(in_array($docente->id, old('docentes', []))) checked @endif>
+                                            <label class="form-check-label" for="docente{{ $docente->id }}">
+                                                {{ $docente->nomeDocente }}
+                                            </label>
+                                        </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
 

@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\cursoModel;
-
 
 class ucModel extends Model
 {
@@ -13,33 +11,31 @@ class ucModel extends Model
 
     protected $table = 'uc';
 
-    // UC pertence a UM curso
+    protected $fillable = [
+        'codigoUc',
+        'nome',
+        'cargaHoraria',
+        'presencaMinima',
+        'descricao',
+        'status',
+        'cursoCodigo'
+    ];
+
+    // Relacionamentos
     public function curso()
     {
-        return $this->belongsTo(
-            cursoModel::class,
-            'cursoCodigo',
-            'id'
-        );
+        return $this->belongsTo(cursoModel::class, 'cursoCodigo', 'id');
     }
+
 
     public function docentes()
     {
-        return $this->belongsToMany(
-            docenteModel::class,
-            'docente_uc',
-            'uc_id',
-            'docente_id'
-        );
+        return $this->belongsToMany(docenteModel::class, 'docente_uc', 'uc_id', 'docente_id');
     }
 
-    public function turmas()
-    {
-        return $this->hasMany(UcTurmaModel::class, 'uc_id');
-    }
 
     public function aulas()
     {
-        return $this->hasMany(aulaModel::class, 'uc_id');
+        return $this->hasMany(aulaModel::class, 'uc_id', 'id');
     }
 }
