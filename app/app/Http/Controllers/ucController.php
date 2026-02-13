@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
+use Carbon\Carbon;
 use App\Models\ucModel;
 use App\Models\cursoModel;
-use Illuminate\Http\Request;
+use App\Models\aulaModel;
+use App\Models\turmaModel;
+
 
 class ucController extends Controller
 {
@@ -42,9 +47,11 @@ class ucController extends Controller
     {
         $ucs = ucModel::with('curso')->get();
         $cursos = cursoModel::all();
+        $turmas = turmaModel::all(); // <-- ADD
 
-        return view('paginas.unidadesCurriculares', compact('ucs', 'cursos'));
+        return view('paginas.unidadesCurriculares', compact('ucs', 'cursos', 'turmas'));
     }
+
 
     public function editarUc($id)
     {
@@ -68,4 +75,53 @@ class ucController extends Controller
         ucModel::where('id', $id)->delete();
         return redirect('/unidadesCurriculares');
     } //fim do metodo excluir
+
+    public function iniciarUc(Request $request)
+    {
+        $request->validate([
+            'uc_id' => 'required|exists:uc,id',
+            'turma_id' => 'required|exists:turma,id',
+            'data_inicio' => 'required|date'
+        ]);
+
+        $uc = ucModel::findOrFail($request->uc_id);
+        $turma = turmaModel::findOrFail($request->turma_id);
+
+        // CONFIG PADRÃO (ajuste se quiser depois)
+        $horasPorDia = 4;
+
+        // total de dias necessários
+        $diasNecessarios = ceil($uc->cargaHoraria / $horasPorDia);
+
+        $data = Carbon::parse($request->data_inicio);
+        $contador = 0;
+
+        while ($contador < $diasNecessarios) {
+
+            // pula sábado e domingo
+            if ($data->isWeekend()) {
+                $data->addDay();
+                continue;
+            }
+
+            // cria aula
+            $aula = aulaModel::create([
+                'nome' => $uc->nome,
+                'dia' => $data->format('Y-m-d'),
+                'horaInicio' => '08:00',
+                'horaFim' => '12:00',
+                'uc_id' => $uc->id,
+                'curso_id' => $uc->curso->id,
+                'status' => 'prevista'
+            ]);
+
+            // vincula turma
+            $aula->turmas()->attach($turma->id);
+
+            $contador++;
+            $data->addDay();
+        }
+
+        return back()->with('success', 'UC iniciada e aulas geradas automaticamente!');
+    }
 }

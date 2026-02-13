@@ -6,6 +6,7 @@ use App\Models\turmaModel;
 use App\Models\cursoModel;
 use App\Models\docenteModel;
 use App\Models\alunoModel;
+use App\Models\aulaModel;
 use App\Services\CalendarioLetivoService;
 use Illuminate\Http\Request;
 
@@ -105,6 +106,7 @@ class turmaController extends Controller
 
         $service = new CalendarioLetivoService();
 
+        // Recalcula data final da turma
         $dataFim = $service->calcularDataFinal(
             $request->dataInicio,
             $curso->dias,
@@ -112,6 +114,7 @@ class turmaController extends Controller
             $request->horasPorDia
         );
 
+        // Atualiza dados da turma
         $turma->update([
             'curso_id'    => $curso->id,
             'dataInicio'  => $request->dataInicio,
@@ -121,16 +124,59 @@ class turmaController extends Controller
             'status'      => $request->status,
         ]);
 
+        // Atualiza docentes e alunos
         if ($request->has('docentes')) {
             $turma->docentes()->sync($request->docentes);
         }
-
         if ($request->has('alunos')) {
             $turma->alunos()->sync($request->alunos);
         }
 
-        return redirect('/turmas');
+        // --- REGERA AULAS DAS UCs DA TURMA ---
+        $ucsDaTurma = $turma->ucs()->get(); // Relação turma->ucs via UcTurmaModel
+
+        foreach ($ucsDaTurma as $ucTurma) {
+            $uc = $ucTurma->uc;
+
+            // Remove aulas antigas da UC nessa turma
+            $uc->aulas()->whereHas('turmas', fn($q) => $q->where('turma_id', $turma->id))->delete();
+
+            // Calcula nova data final da UC
+            $dataFimUc = $service->calcularDataFinal(
+                $turma->dataInicio,
+                $curso->dias,
+                $uc->cargaHoraria,
+                $turma->horasPorDia
+            );
+
+            // Lista datas letivas da UC
+            $datas = $service->listarDatasLetivas(
+                $turma->dataInicio,
+                $dataFimUc,
+                $curso->dias
+            );
+
+            // Cria aulas novamente
+            foreach ($datas as $dia) {
+                $aula = aulaModel::create([
+                    'curso_id' => $curso->id,
+                    'uc_id'    => $uc->id,
+                    'dia'      => $dia,
+                    'status'   => 'prevista'
+                ]);
+                $aula->turmas()->attach($turma->id);
+            }
+
+            // Atualiza datas da UC na turma
+            $ucTurma->update([
+                'data_inicio' => $turma->dataInicio,
+                'data_fim'    => $dataFimUc
+            ]);
+        }
+
+        return redirect('/turmas')->with('success', 'Turma atualizada e aulas das UCs regeneradas.');
     }
+
 
     public function excluirTurma($id)
     {

@@ -44,4 +44,9 @@ class turmaModel extends Model
             'aluno_id'
         );
     }
+
+    public function ucs()
+    {
+        return $this->hasMany(UcTurmaModel::class, 'turma_id');
+    }
 }

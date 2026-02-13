@@ -19,7 +19,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/alunos"><i class="bi bi-person"></i> Alunos</a>
+                <a class="btn btn-primary" href="/alunos"><i class="bi bi-person"></i> Alunos</a>
             </li>
 
             <li class="nav-item">
@@ -27,11 +27,11 @@
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/aulas"><i class="bi bi-person"></i> Alunos</a>
+                <a class="btn btn-primary active" href="/aulas"><i class="bi bi-person"></i> Alunos</a>
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/indicadores"><i class="bi bi-people-fill"></i> Turmas</a>
+                <a class="btn btn-primary" href="/indicadores"><i class="bi bi-person"></i> Indicadores</a>
             </li>
 
             <li class="nav-item">

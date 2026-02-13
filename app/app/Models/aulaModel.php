@@ -12,45 +12,40 @@ class aulaModel extends Model
     protected $table = 'aulas';
 
     protected $fillable = [
-        'nome',
-        'data',
-        'horaInicio',
-        'horaFim',
+        'curso_id',
         'uc_id',
-        'situacao'
+        'dia',
+        'status'
     ];
 
-    // Aula pertence a um Curso
+    public function turmas()
+    {
+        return $this->belongsToMany(turmaModel::class, 'aula_turma', 'aula_id', 'turma_id');
+    }
+
+    public function docentes()
+    {
+        return $this->belongsToMany(docenteModel::class, 'aula_docente', 'aula_id', 'docente_id');
+    }
+
     public function curso()
     {
         return $this->belongsTo(cursoModel::class, 'curso_id');
     }
 
-    // Aula pertence a uma UC
     public function uc()
     {
         return $this->belongsTo(ucModel::class, 'uc_id');
     }
 
-    // Aula pode ter vários Docentes
-    public function docentes()
-    {
-        return $this->belongsToMany(
-            docenteModel::class,
-            'aula_docente',
-            'aula_id',
-            'docente_id'
-        );
-    }
 
-    // Aula pode ter várias Turmas
-    public function turmas()
+    // STATUS CALCULADO (SEM SALVAR NO BANCO)
+    public function getStatusCalculadoAttribute()
     {
-        return $this->belongsToMany(
-            turmaModel::class,
-            'aula_turma',
-            'aula_id',
-            'turma_id'
-        );
+        $hoje = date('Y-m-d');
+
+        if ($this->dia > $hoje) return 'prevista';
+        if ($this->dia == $hoje) return 'andamento';
+        return 'concluida';
     }
 }

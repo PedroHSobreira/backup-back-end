@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\cursoModel;
 
+
 class ucModel extends Model
 {
     use HasFactory;
@@ -30,5 +31,15 @@ class ucModel extends Model
             'uc_id',
             'docente_id'
         );
+    }
+
+    public function turmas()
+    {
+        return $this->hasMany(UcTurmaModel::class, 'uc_id');
+    }
+
+    public function aulas()
+    {
+        return $this->hasMany(aulaModel::class, 'uc_id');
     }
 }

@@ -91,4 +91,34 @@ class CalendarioLetivoService
 
         return array_unique(array_merge($feriados, $extras));
     }
+
+    public function listarDatasLetivas(
+        $dataInicio,
+        $dataFim,
+        array $diasSemana
+    ) {
+        $data = Carbon::parse($dataInicio);
+        $fim  = Carbon::parse($dataFim);
+
+        $datas = [];
+
+        while ($data->lte($fim)) {
+
+            $ano = $data->year;
+            $feriados = $this->getFeriados($ano);
+            $diaSemana = strtolower($data->locale('pt_BR')->dayName);
+
+            if (
+                in_array($diaSemana, $diasSemana) &&
+                !in_array($data->toDateString(), $feriados) &&
+                !$this->isUltimaSexta($data)
+            ) {
+                $datas[] = $data->toDateString();
+            }
+
+            $data->addDay();
+        }
+
+        return $datas;
+    }
 }

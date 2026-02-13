@@ -3,101 +3,193 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\aulaModel;
-use App\Models\cursoModel;
+use App\Models\ucModel;
 use App\Models\turmaModel;
 use App\Models\docenteModel;
-use App\Models\ucModel;
+use App\Models\cursoModel;
+use App\Models\UcTurmaModel;
+use App\Services\CalendarioLetivoService;
 
 class aulaController extends Controller
 {
-    public function inserirAula(Request $request)
-    {
-        // Pega os dados do form
-        $uc_id    = $request->input('uc_id');
-        $curso_id = $request->input('curso_id');
-        $turma_id = $request->input('turma_id');
-        $dia      = $request->input('dia');
-        $status   = $request->input('status');
-
-        // Cria a aula
-        $model = new aulaModel();
-        $model->curso_id = $curso_id;
-        $model->uc_id    = $uc_id;
-        $model->dia      = $dia;
-        $model->status   = $status;
-        $model->save();
-
-        if ($turma_id) {
-            $model->turmas()->attach([$turma_id]);
-        }
-
-        if ($request->docentes) {
-            $model->docentes()->attach($request->docentes);
-        }
-
-        return redirect('/aulas');
-    }
 
     public function consultarAula()
     {
-        $aulas    = aulaModel::with(['curso', 'uc', 'turmas', 'docentes'])->get();
-        $cursos   = cursoModel::all();
+        $ucs = ucModel::with([
+            'aulas' => fn($q) => $q->orderBy('dia', 'asc')
+                ->with(['curso', 'turmas', 'docentes'])
+        ])->get();
+
+
+        $cursos   = cursoModel::with('ucs')->get();
         $turmas   = turmaModel::all();
         $docentes = docenteModel::all();
-        $ucs      = ucModel::all(); // <- garante que $ucs exista na view
 
         return view('paginas.aulas', compact(
-            'aulas',
+            'ucs',
             'cursos',
             'turmas',
-            'docentes',
-            'ucs' // <- inclua aqui
+            'docentes'
         ));
     }
 
 
+    public function inserirAula(Request $request)
+    {
+        $request->validate([
+            'curso_id' => 'required|exists:curso,id',
+            'uc_id'    => 'required|exists:uc,id',
+            'dia'      => 'required|date',
+            'status'   => 'required|string'
+        ]);
+
+        DB::transaction(function () use ($request) {
+
+            $aula = aulaModel::create([
+                'curso_id' => $request->curso_id,
+                'uc_id'    => $request->uc_id,
+                'dia'      => $request->dia,
+                'status'   => $request->status
+            ]);
+
+            if ($request->turma_id) {
+                $aula->turmas()->attach($request->turma_id);
+            }
+
+            if ($request->docentes) {
+                $aula->docentes()->attach($request->docentes);
+            }
+        });
+
+        return redirect('/aulas')->with('success', 'Aula criada.');
+    }
+
     public function editarAulas($id)
     {
-        $dado    = aulaModel::findOrFail($id);
-        $cursos  = cursoModel::with('ucs')->get();
-        $turmas  = turmaModel::all();
+        $dado     = aulaModel::findOrFail($id);
+        $cursos   = cursoModel::with('ucs')->get();
+        $turmas   = turmaModel::all();
         $docentes = docenteModel::all();
 
-        return view('paginas.editarAulas', compact('dado', 'cursos', 'turmas', 'docentes'));
+        return view('paginas.editarAulas', compact(
+            'dado',
+            'cursos',
+            'turmas',
+            'docentes'
+        ));
     }
 
     public function atualizarAula(Request $request, $id)
     {
-        $aula = aulaModel::findOrFail($id);
+        $request->validate([
+            'curso_id' => 'required|exists:curso,id',
+            'uc_id'    => 'required|exists:uc,id',
+            'dia'      => 'required|date',
+            'status'   => 'required|string'
+        ]);
 
-        // Atualiza campos diretos da aula
-        $aula->curso_id = $request->input('curso_id');
-        $aula->uc_id    = $request->input('uc_id');
-        $aula->dia      = $request->input('dia');
-        $aula->status   = $request->input('status');
-        $aula->save();
+        DB::transaction(function () use ($request, $id) {
 
-        // Atualiza turmas (Many-to-Many)
-        if ($request->turma_id) {
-            // Substitui as turmas atuais pelas novas selecionadas
-            $aula->turmas()->sync([$request->turma_id]);
-        }
+            $aula = aulaModel::findOrFail($id);
 
-        // Atualiza docentes (Many-to-Many)
-        if ($request->docentes) {
-            $aula->docentes()->sync($request->docentes);
-        } else {
-            $aula->docentes()->sync([]); // Remove todos se nenhum selecionado
-        }
+            $aula->update([
+                'curso_id' => $request->curso_id,
+                'uc_id'    => $request->uc_id,
+                'dia'      => $request->dia,
+                'status'   => $request->status
+            ]);
 
-        return redirect('/aulas');
+            $aula->turmas()->sync(
+                $request->turma_id ? [$request->turma_id] : []
+            );
+
+            $aula->docentes()->sync(
+                $request->docentes ?? []
+            );
+        });
+
+        return redirect('/aulas')->with('success', 'Aula atualizada.');
     }
-
 
     public function excluirAula($id)
     {
-        aulaModel::where('id', $id)->delete();
-        return redirect('/aulas');
+        $aula = aulaModel::findOrFail($id);
+
+        $aula->turmas()->detach();
+        $aula->docentes()->detach();
+        $aula->delete();
+
+        return redirect('/aulas')->with('success', 'Aula removida.');
+    }
+
+    public function iniciarUc(Request $request, CalendarioLetivoService $service)
+    {
+        $request->validate([
+            'uc_id'       => 'required|exists:uc,id',
+            'turma_id'    => 'required|exists:turma,id',
+            'data_inicio' => 'required|date'
+        ]);
+
+        $uc    = ucModel::findOrFail($request->uc_id);
+        $turma = turmaModel::findOrFail($request->turma_id);
+        $curso = cursoModel::findOrFail($turma->curso_id);
+
+        // Verifica se já existe UC em andamento na turma
+        $existe = UcTurmaModel::where([
+            'uc_id'    => $uc->id,
+            'turma_id' => $turma->id,
+            'status'   => 'em_andamento'
+        ])->exists();
+
+        if ($existe) {
+            return back()->with('error', 'Essa UC já está em andamento.');
+        }
+
+        DB::transaction(function () use ($request, $uc, $turma, $curso, $service) {
+
+            // Calcula a data final da UC usando serviço de calendário
+            $dataFim = $service->calcularDataFinal(
+                $request->data_inicio,
+                $curso->dias,
+                $uc->cargaHoraria,
+                $turma->horasPorDia
+            );
+
+            // Remove aulas antigas dessa UC na turma (evita duplicidade)
+            $uc->aulas()->whereHas('turmas', fn($q) => $q->where('turma_id', $turma->id))->delete();
+
+            // Cria ou atualiza vínculo UC-Turma
+            UcTurmaModel::updateOrCreate(
+                ['uc_id' => $uc->id, 'turma_id' => $turma->id],
+                [
+                    'data_inicio' => $request->data_inicio,
+                    'data_fim'    => $dataFim,
+                    'status'      => 'em_andamento'
+                ]
+            );
+
+            // Gera as datas letivas da UC
+            $datas = $service->listarDatasLetivas(
+                $request->data_inicio,
+                $dataFim,
+                $curso->dias
+            );
+
+            // Cria aulas na UC e vincula à turma
+            foreach ($datas as $dia) {
+                $aula = aulaModel::create([
+                    'curso_id' => $curso->id,
+                    'uc_id'    => $uc->id,
+                    'dia'      => $dia,
+                    'status'   => 'prevista'
+                ]);
+                $aula->turmas()->attach($turma->id);
+            }
+        });
+
+        return redirect('/aulas')->with('success', 'UC iniciada e aulas geradas com sucesso!');
     }
 }

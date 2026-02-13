@@ -35,6 +35,8 @@
         </ul>
         <!-- Conteudo Principal -->
 
+        <!-- Conteudo Principal -->
+
         <section class="container-fluid">
 
             <!-- Cabeçalho -->
@@ -55,7 +57,6 @@
             $mapaCursos[$curso->codigo] = $curso->nome;
             }
             @endphp
-
 
             <!-- Cards -->
             <div class="row g-4">
@@ -91,7 +92,6 @@
                                 <strong>Curso:</strong>
                                 {{ $uc->curso->nome ?? 'Curso não encontrado' }}
                             </li>
-
                             <li><strong>Carga Horária:</strong> {{ $uc->cargaHoraria }}h</li>
                             <li><strong>Presença Mínima:</strong> {{ $uc->presencaMinima }}%</li>
                         </ul>
@@ -100,18 +100,75 @@
                             {{ $uc->descricao }}
                         </p>
 
-                        <div class="mt-auto d-flex">
+                        {{-- ================= LISTA DE AULAS ================= --}}
+                        @if($uc->aulas->count())
+                        <hr>
+                        <h6 class="fw-bold small mb-2">Aulas geradas:</h6>
+                        <ul class="small ps-3">
+                            @foreach($uc->aulas as $aula)
+                            <li>
+                                {{ \Carbon\Carbon::parse($aula->dia)->format('d/m/Y') }}
+                                —
+                                <span class="text-muted">
+                                    {{ ucfirst($aula->status) }}
+                                </span>
+                            </li>
+                            @endforeach
+                        </ul>
+                        @endif
+                        {{-- ==================================================== --}}
+
+                        <div class="mt-auto d-flex gap-2">
+                            <button type="button"
+                                class="btn btn-success btn-sm w-100"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalIniciarUc-{{ $uc->id }}">
+                                Iniciar UC
+                            </button>
+
                             <a href="/editarUnidadesCurriculares/{{$uc->id}}" class="btn btn-outline-dark btn-sm w-100">
                                 <i class="bi bi-pencil me-1"></i> Editar
                             </a>
                         </div>
+                    </div>
+                </div> 
 
+                {{-- ================= MODAL INICIAR UC ================= --}}
+                <div class="modal fade" id="modalIniciarUc-{{ $uc->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form method="POST" action="/iniciarUc">
+                            @csrf
+                            <input type="hidden" name="uc_id" value="{{ $uc->id }}">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Iniciar {{ $uc->nome }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label>Turma</label>
+                                    <select name="turma_id" class="form-select" required>
+                                        @foreach($turmas as $turma)
+                                        <option value="{{ $turma->id }}">{{ $turma->codigoTurma }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    <label class="mt-3">Data início</label>
+                                    <input type="date" name="data_inicio" class="form-control" required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-success">Iniciar</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
+                {{-- ==================================================== --}}
+
                 @endforeach
                 @endif
             </div>
         </section>
+
 
         <!-- Modal Novo UC -->
         <div class="modal fade" id="modalNovaUc" tabindex="-1" aria-hidden="true">

@@ -7,7 +7,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary active" href="/cursos"><i class="bi bi-backpack"></i> Cursos</a>
+                <a class="btn btn-primary" href="/cursos"><i class="bi bi-backpack"></i> Cursos</a>
             </li>
 
             <li class="nav-item">
@@ -27,11 +27,11 @@
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/aulas"><i class="bi bi-person"></i> Alunos</a>
+                <a class="btn btn-primary" href="/aulas"><i class="bi bi-person"></i> Aulas</a>
             </li>
 
             <li class="nav-item">
-                <a class="btn btn-primary" href="/indicadores"><i class="bi bi-people-fill"></i> Turmas</a>
+                <a class="btn btn-primary" href="/indicadores"><i class="bi bi-person"></i> Indicadores</a>
             </li>
 
             <li class="nav-item">
@@ -39,11 +39,8 @@
             </li>
         </ul>
 
-
         <!-- Conteudo Principal -->
-
         <section class="container-fluid">
-
             <!-- Cabeçalho -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
@@ -55,7 +52,6 @@
                     <i class="bi bi-arrow-left me-1"></i> Voltar
                 </a>
             </div>
-
 
             <form action="/atualizarUc/{{$dado->id}}" method="POST">
                 @csrf
@@ -89,49 +85,43 @@
                                 </option>
                                 @endforeach
                             </select>
-
                         </div>
                     </div>
+                </div>
 
-                    <div class="row">
-                        <!-- Carga Horária -->
-                        <div class="col">
-                            <label class="form-label fw-semibold">Carga Horária (horas) *</label>
-                            <input type="number" name="cargaHoraria" class="form-control" min="0" value="{{$dado->cargaHoraria}}" required>
-                        </div>
-
-                        <!-- Turno -->
-                        <div class="col">
-                            <label class="form-label fw-semibold">Presença Mínima (%) *</label>
-                            <input type="number" name="presencaMinima" class="form-control" min="0" value="{{$dado->presencaMinima}}" required>
-                        </div>
+                <div class="row">
+                    <!-- Carga Horária -->
+                    <div class="col">
+                        <label class="form-label fw-semibold">Carga Horária (horas) *</label>
+                        <input type="number" name="cargaHoraria" class="form-control" min="0" value="{{$dado->cargaHoraria}}" required>
                     </div>
 
-                    <div class="row">
-                        <!-- Descrição -->
-                        <div class="col">
-                            <label class="form-label fw-semibold">Descrição</label>
-                            <textarea rows="3" type="text" name="descricao" class="form-control"
-                                placeholder="Descreva o conteúdo da UC..." value="{{$dado->descricao}}" style="resize: none;">
-                            </textarea>
-                        </div>
+                    <!-- Presença Mínima -->
+                    <div class="col">
+                        <label class="form-label fw-semibold">Presença Mínima (%) *</label>
+                        <input type="number" name="presencaMinima" class="form-control" min="0" value="{{$dado->presencaMinima}}" required>
                     </div>
+                </div>
 
-                    <div class="row">
-                        <!-- Status -->
-                        <div class="col">
-                            <label class="form-label fw-semibold">Status</label>
-                            <select name="status" class="form-select">
-                                <option value="ativo" {{ $dado->status == 'ativo' ? 'selected' : '' }}>Ativo</option>
-                                <option value="inativo" {{ $dado->status == 'inativo' ? 'selected' : '' }}>Inativo</option>
-                            </select>
-
-                        </div>
-
-                        <div class="col">
-
-                        </div>
+                <div class="row">
+                    <!-- Descrição -->
+                    <div class="col">
+                        <label class="form-label fw-semibold">Descrição</label>
+                        <textarea rows="3" type="text" name="descricao" class="form-control"
+                            placeholder="Descreva o conteúdo da UC..." style="resize: none;">{{$dado->descricao}}</textarea>
                     </div>
+                </div>
+
+                <div class="row">
+                    <!-- Status -->
+                    <div class="col">
+                        <label class="form-label fw-semibold">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="ativo" {{ $dado->status == 'ativo' ? 'selected' : '' }}>Ativo</option>
+                            <option value="inativo" {{ $dado->status == 'inativo' ? 'selected' : '' }}>Inativo</option>
+                        </select>
+                    </div>
+                    <div class="col"></div>
                 </div>
 
                 <!-- Footer -->
@@ -166,7 +156,6 @@
                     </div>
                 </div>
             </form>
-
         </section>
     </div>
 </x-layout>
